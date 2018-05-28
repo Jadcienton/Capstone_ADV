@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="88dp">
+    <!--
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/ic_launcher_round" />-->
+
+    <TextView
+        android:id="@+id/sisda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Numero SISDA"
+        android:textColor="#000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/sisda"
+        android:layout_below="@id/sisda"
+        android:text="Dirección"
+        android:layout_toStartOf="@id/delay"
+        android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/sisda"
+        android:layout_toEndOf="@id/priority"
+        android:background="@drawable/bg_level"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        android:text="Alcantarillado Sector"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <!-- <TextView
+         android:id="@+id/object"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/address"
+         android:layout_marginRight="4dp"
+         android:layout_toRightOf="@id/level"
+         android:background="@drawable/bg_object"
+         android:paddingEnd="4dp"
+         android:paddingStart="4dp"
+         android:text="Colector"
+         android:textColor="@android:color/white"
+         android:textStyle="bold" />
+
+     <TextView
+         android:id="@+id/fault"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/address"
+         android:layout_toEndOf="@+id/object"
+         android:background="@drawable/bg_fault"
+         android:paddingEnd="4dp"
+         android:paddingStart="4dp"
+         android:text="Con Inundación"
+         android:textColor="@android:color/white"
+         android:textStyle="bold" />-->
+
+    <TextView
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/level"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="ESTADO"
+        android:textStyle="bold"
+        android:textAlignment="textEnd"
+        android:singleLine="true"/>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="87dp"
+        android:background="@color/divider" />
+
+    <TextView
+        android:id="@+id/priority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/sisda"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/sisda"
+        android:background="@drawable/bg_gray"
+        android:paddingEnd="4dp"
+        android:paddingStart="4dp"
+        android:text="P1"
+        android:textAlignment="center"
+        android:textColor="#01295e"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/delay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/progress"
+        android:layout_centerVertical="true"
+        android:background="@drawable/bg_progress_good"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="A Tiempo"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/progress"
+        android:layout_below="@+id/address"
+        android:text="1:05:56" />
+
+    <TextView
+        android:id="@+id/init_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/address"
+        android:layout_marginStart="16dp"
+        android:text="Generado a las 10:16" />
+
+
+
+</RelativeLayout>
