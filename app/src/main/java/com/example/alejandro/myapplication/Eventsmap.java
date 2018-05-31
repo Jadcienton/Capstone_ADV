@@ -2,8 +2,12 @@ package com.example.alejandro.myapplication;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -14,13 +18,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
-
+import android.util.Log;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 import java.util.ArrayList;
 
-public class Eventsmap extends FragmentActivity implements OnMapReadyCallback {
-
+public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
+    private static final String TAG = "EventMap";
     private GoogleMap mMap;
-
+    public JSONArray addresses = new JSONArray();
+    public ArrayList<LatLng> markers = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,23 +54,14 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        SisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
+        Log.d(TAG, "onMapReady: "+ markers.size());
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
         LatLng adv = new LatLng(-29.928119,-71.242348);
-        LatLng casa = new LatLng(-29.916580,-71.255452);
-        ArrayList<LatLng> markers = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            markers.add(new LatLng(-29.916580+(1/1+i),-71.255452+(1/1+i)));
-            mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("Aguas del valle").snippet("hola").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
-        }
-
-
-        /*//mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del valle").snippet("hola").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
-        mMap.addMarker(new MarkerOptions().position(casa).title("Sisda: 135135, Ejecución").snippet("hola").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));*/
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));
+
 
     }
     private Bitmap getBitmap(int drawableRes) {
@@ -74,5 +73,52 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+    public void SisdaQuery(String url){
+        Log.d(TAG, "LA URL ES: " + url);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        // Initialize a new JsonArrayRequest instance
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try{
+                            addresses=response;
+                            for(int i=0;i<response.length();i++) {
+                                // Get current json object
+                                JSONObject sisda = addresses.getJSONObject(i);
+                                LatLng latlng = new LatLng(sisda.getDouble("6"), sisda.getDouble("7"));
+                                markers.add(latlng);
+                                switch (sisda.getString("STATE_EVENT")) {
+                                    case "EN CAMINO":
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("SISDA_EVENT") + "  P" + sisda.getInt("PRIORITY_EVENT")).snippet(sisda.getString("STATE_EVENT").toLowerCase()).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+                                        break;
+                                    case "EN EJECUCION":
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("SISDA_EVENT") + "  P" + sisda.getInt("PRIORITY_EVENT")).snippet(sisda.getString("STATE_EVENT").toLowerCase()).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+                                        break;
+                                    case "EN INSPECCION":
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("SISDA_EVENT") + "  P" + sisda.getInt("PRIORITY_EVENT")).snippet(sisda.getString("STATE_EVENT").toLowerCase()).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+                                        break;
+                                }
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+                        // Do something when error occurred
+
+                    }
+                }
+        );
+        requestQueue.add(jsonArrayRequest);
+
     }
 }
