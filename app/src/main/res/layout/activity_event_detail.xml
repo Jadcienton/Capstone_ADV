@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventDetail"
+    android:id="@+id/coordinatorlayout_detail">
+<!--    <com.google.android.gms.maps.MapView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"></com.google.android.gms.maps.MapView>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_comments_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="normal"
+        android:src="@drawable/ic_comments"
+        app:layout_anchor="@+id/scrollView2"
+        app:layout_anchorGravity="right|bottom"
+        android:layout_margin="@dimen/fab_margin"/>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/map" />
+
+            <!-- Bloque SISDA -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_sisda" />
+
+                <TextView
+                    android:id="@+id/text_sisda_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/sisda"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/sisda_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_sisda_detail"
+                    android:text="1845287" />
+
+                <TextView
+                    android:id="@+id/text_creation_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/fecha_de_ingreso"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/sisda_detail"/>
+
+                <TextView
+                    android:id="@+id/creation_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06-05-2018 13:57"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_sisda_detail"
+                    android:layout_toEndOf="@+id/text_creation_date_detail"/>
+                <TextView
+                    android:id="@+id/text_arrival_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Llegada a Terreno:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_creation_date_detail"/>
+
+                <TextView
+                    android:id="@+id/arrival_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06-05-2018 14:30"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_creation_date_detail"
+                    android:layout_toEndOf="@+id/text_arrival_date_detail"/>
+
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divider" />
+
+            <!-- Bloque Cliente -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_customer" />
+
+                <TextView
+                    android:id="@+id/text_customer_number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/numero_del_cliente"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/customer_number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_customer_number_detail"
+                    android:text="1059706" />
+
+                <TextView
+                    android:id="@+id/text_customer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_customer_number_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/cliente"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/customer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_customer_number_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_customer_detail"
+                    android:text="Miguel Hernandez" />
+
+                <TextView
+                    android:id="@+id/text_phone_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_customer_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/tel_fono"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/phone_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_customer_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_phone_detail"
+                    android:text="997450881"
+
+                    />
+
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divider" />
+            <!-- Bloque Direccion -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_location" />
+
+                <TextView
+                    android:id="@+id/text_address_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/calle"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/address_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_address_detail"
+                    android:text="Victor Salas" />
+
+                <TextView
+                    android:id="@+id/text_number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/address_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/numero"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/address_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_number_detail"
+                    android:text="1331" />
+
+                <TextView
+                    android:id="@+id/text_dep_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/number_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/depto"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dep_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/number_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_dep_detail"
+                    android:text="-" />
+
+                <TextView
+                    android:id="@+id/text_city_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/dep_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/localidad"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/city_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/dep_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_city_detail"
+                    android:text="La Serena" />
+
+                <TextView
+                    android:id="@+id/text_corner_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/city_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/esquina"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/corner_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/city_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_corner_detail"
+                    android:text="La Colina" />
+
+                <TextView
+                    android:id="@+id/text_ref_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/corner_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/referencia"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/ref_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/corner_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_ref_detail"
+                    android:text="Sector Colina El Pino" />
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_fault" />
+
+                <TextView
+                    android:id="@+id/text_level_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/nivel"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/level_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_level_detail"
+                    android:text="Alcantarillado Domicilio" />
+
+                <TextView
+                    android:id="@+id/text_object_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_level_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/objeto"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/object_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_level_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_object_detail"
+                    android:text="Camara Interior" />
+
+                <TextView
+                    android:id="@+id/text_fault_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_object_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/falla"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/fault_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_object_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_fault_detail"
+                    android:text="Rebalsando" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_customer_detail" />
+
+                <TextView
+                    android:id="@+id/text_diameter_pipe_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/arranque"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/diameter_pipe_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_diameter_pipe_detail"
+                    android:text="DIA.25" />
+
+                <TextView
+                    android:id="@+id/text_material_pipe_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_diameter_pipe_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/material"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/material_pipe_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_diameter_pipe_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_material_pipe_detail"
+                    android:text="Fierro Galvanizado" />
+
+                <TextView
+                    android:id="@+id/text_diameter_sewer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_material_pipe_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/alcantarillado"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/diameter_sewer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_material_pipe_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_diameter_sewer_detail"
+                    android:text="DIA.110" />
+
+                <TextView
+                    android:id="@+id/text_material_sewer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_diameter_sewer_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/material"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/material_sewer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_diameter_sewer_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_material_sewer_detail"
+                    android:text="Fierro Galvanizado" />
+
+                <TextView
+                    android:id="@+id/text_water_meter_number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_material_sewer_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/cantidad_de_medidores"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/water_meter_number_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_material_sewer_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_water_meter_number_detail"
+                    android:text="1" />
+
+                <TextView
+                    android:id="@+id/text_social_customer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_water_meter_number_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/cliente_social"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/social_customer_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_water_meter_number_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_social_customer_detail"
+                    android:text="No" />
+
+                <TextView
+                    android:id="@+id/text_activity_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_social_customer_detail"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/actividad_econ_mica"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/activity_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_social_customer_detail"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_activity_detail"
+                    android:text="Residencia" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

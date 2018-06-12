@@ -12,7 +12,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import static com.android.volley.VolleyLog.TAG;
 
 
 /**
@@ -33,8 +51,8 @@ public class DailyEventFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private OnFragmentInteractionListener mListener;
-    RecyclerView recyclerViewSisda;
-    ArrayList<Sisda> eventList;
+    private RecyclerView recyclerViewSisda;
+    private ArrayList<Sisda> eventList;
     public DailyEventFragment() {
         // Required empty public constructor
     }
@@ -75,7 +93,9 @@ public class DailyEventFragment extends Fragment {
         recyclerViewSisda = view.findViewById(R.id.recyclerview);
         recyclerViewSisda.setLayoutManager(new LinearLayoutManager(view.getContext()));
         pushSisda();
+        //sisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList);
+        Log.d(TAG, "hola");
         recyclerViewSisda.setAdapter(adapter);
 
         return view;
@@ -121,12 +141,60 @@ public class DailyEventFragment extends Fragment {
     }
     private void pushSisda(){
 
-        eventList.add(new Sisda("152489","P1","Estadio 1733, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
-        eventList.add(new Sisda("456813","P1","Larrondo 1281, Coquimbo","Agua Potable Sector","Retrasado","A Tiempo","-0:54:01"));
-        eventList.add(new Sisda("152489","P1","Estadio 1733, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
-        eventList.add(new Sisda("152489","P1","Estadio 1733, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
-        eventList.add(new Sisda("152489","P1","Estadio 1733, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
+        eventList.add(new Sisda("152489","P1","Estadio 3333, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
+        eventList.add(new Sisda("456813","P1","Larrondo 1281, Coquimbo","Agua Potable Sector","En Ejecución","Retrasado","-0:54:01"));
+        eventList.add(new Sisda("152789","P2","Gabriela Mistral 4001, La Serena","Alcantarillado Sector","En Camino","A Tiempo","1:48:21"));
+        eventList.add(new Sisda("152465","P2","Balmaceda 328, La Serena","Agua Potable Domicilio","En Ejecución","A Tiempo","1:00:00"));
+        eventList.add(new Sisda("152424","P1","Larrain Alcalde SN, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:57:51"));
+        eventList.add(new Sisda("152489","P1","Los Girasoles 5383, La Serena","Agua Potable Domicilio","En Camino","A Tiempo","0:32:41"));
+        eventList.add(new Sisda("456813","P1","Larrondo 1281, Coquimbo","Agua Potable Sector","En Ejecución","Retrasado","-0:54:01"));
+        eventList.add(new Sisda("152789","P2","Gabriela Mistral 4001, La Serena","Alcantarillado Sector","En Camino","A Tiempo","1:48:21"));
+        eventList.add(new Sisda("152465","P2","Balmaceda 328, La Serena","Agua Potable Domicilio","En Ejecución","A Tiempo","1:00:00"));
+        eventList.add(new Sisda("152424","P1","Larrain Alcalde SN, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
 
+
+    }
+    public void sisdaQuery(String url){
+        Log.d(TAG, "LA URL ES: " + url);
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        //JsonObjectRequest request = new JsonObjectRequest()
+
+
+       // RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        // Initialize a new JsonArrayRequest instance
+        //JsonArrayRequest request = new JsonArrayRequest(url, new JSONObject(), future, future);
+       // requestQueue.add(request);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try{
+                            for(int i=0;i<response.length();i++) {
+                                // Get current json object
+                                JSONObject sisda = response.getJSONObject(i);
+                                Log.d(TAG, " " + response.length());
+                                eventList.add(new Sisda(sisda.getString("SISDA_EVENT"),"P"+sisda.getString("SISDA_EVENT"),sisda.getString("ADDRESS_COSTUMER")+" "+sisda.getString("NUMBER_COSTUMBER"),"Alcantarillado Sector",sisda.getString("STATE_EVENT"),"A Tiempo","0:54:01"));
+
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+                        // Do something when error occurred
+
+                    }
+                }
+        );
+        //requestQueue.add(jsonArrayRequest);
+        Log.d(TAG, " holl");
 
     }
 }

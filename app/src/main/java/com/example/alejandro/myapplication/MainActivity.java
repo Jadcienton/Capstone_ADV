@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-
     }
 
     @Override
@@ -85,6 +82,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
             Intent intent = new Intent(this,Eventsmap.class);
             startActivity(intent);
+
 
         } else if (id == R.id.nav_share) {
 

@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Aguas del Valle</string>
+    <string name="app_name">Eventos Diarios</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Usuario Prueba</string>
+    <string name="nav_header_subtitle">adv@aguasdelvalle.cl</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -24,4 +24,24 @@
         completions."
     </string>
     <string name="title_activity_eventsmap">Mapa</string>
+    <string name="sisda">SISDA:</string>
+    <string name="fecha_de_ingreso">Fecha de Ingreso:</string>
+    <string name="numero_del_cliente">Numero del Cliente:</string>
+    <string name="cliente">Cliente:</string>
+    <string name="tel_fono">Teléfono:</string>
+    <string name="calle">Calle:</string>
+    <string name="numero">Numero:</string>
+    <string name="depto">Depto:</string>
+    <string name="esquina">Esquina:</string>
+    <string name="referencia">Referencia:</string>
+    <string name="nivel">Nivel:</string>
+    <string name="objeto">Objeto:</string>
+    <string name="falla">Falla:</string>
+    <string name="arranque">Ø Arranque:</string>
+    <string name="material">Material:</string>
+    <string name="alcantarillado">Ø Alcantarillado:</string>
+    <string name="cantidad_de_medidores">Cantidad de Medidores:</string>
+    <string name="cliente_social">Cliente Social:</string>
+    <string name="actividad_econ_mica">Actividad Económica:</string>
+    <string name="localidad">Localidad:</string>
 </resources>
