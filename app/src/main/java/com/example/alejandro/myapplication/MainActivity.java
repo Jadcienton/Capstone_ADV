@@ -1,6 +1,7 @@
 package com.example.alejandro.myapplication;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,14 +16,15 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener {
-
+    private Session session;
+    private ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        session = new Session(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,7 +89,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            progress = new ProgressDialog(this);
+            progress.setMessage("Cerrando sesión...");
+            progress.show();
+            if (session.loggedin()) {
+                logout();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -98,5 +105,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+    private void logout(){
+        session.setLoggedin(false);
+        startActivity(new Intent(this,LoginActivity.class));
+        finish();
     }
 }
