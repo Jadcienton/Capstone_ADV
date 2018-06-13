@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -88,15 +90,33 @@ public class DailyEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle("Eventos Diarios");
         View view = inflater.inflate(R.layout.fragment_daily_event, container, false);
         eventList = new ArrayList<>();
         recyclerViewSisda = view.findViewById(R.id.recyclerview);
         recyclerViewSisda.setLayoutManager(new LinearLayoutManager(view.getContext()));
         pushSisda();
         //sisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList);
         Log.d(TAG, "hola");
         recyclerViewSisda.setAdapter(adapter);
+
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                    }
+                },500);
+                pushSisda();
+                recyclerViewSisda.setAdapter(adapter);
+            }
+        });
 
         return view;
     }
