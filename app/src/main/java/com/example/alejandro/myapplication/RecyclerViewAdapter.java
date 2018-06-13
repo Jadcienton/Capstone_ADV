@@ -45,24 +45,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.progress.setText(mSisdas.get(position).getmProgresses());
         holder.delay.setText(mSisdas.get(position).getmDelay());
         holder.time.setText(mSisdas.get(position).getmTime());
-        if(mSisdas.get(position).getmTime().equals("1:00:00") && mSisdas.get(position).getmTime().equals("A Tiempo"))
+        if(mSisdas.get(position).getmTime().equals("1:00:00") && mSisdas.get(position).getmDelay().equals("A Tiempo"))
             holder.delay.setBackgroundResource(R.drawable.bg_progress_caution);
-        else if (mSisdas.get(position).getmProgresses().equals("Retrasado"))
+        else if (mSisdas.get(position).getmDelay().equals("Retrasado"))
             holder.delay.setBackgroundResource(R.drawable.bg_progress_warning);
-        else if (mSisdas.get(position).getmProgresses().equals("A Tiempo"))
+        else if (mSisdas.get(position).getmDelay().equals("A Tiempo"))
             holder.delay.setBackgroundResource(R.drawable.bg_progress_good);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: "+ mSisdas.get(position));
-                Toast.makeText(mContext,mSisdas.get(position).getmSisdas(),Toast.LENGTH_SHORT).show();
                 openSisdaDetail();
             }
         });
     }
     public void openSisdaDetail(){
-        //Intent intent = new Intent(mContext,SisdaDetail.class);
-       // mContext.startActivity(intent);
+        Intent intent = new Intent(mContext,EventDetail.class);
+        mContext.startActivity(intent);
     }
     @Override
     public int getItemCount() {

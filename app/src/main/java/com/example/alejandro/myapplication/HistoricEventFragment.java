@@ -69,6 +69,7 @@ public class HistoricEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle("Eventos Históricos");
         View view = inflater.inflate(R.layout.fragment_historic_event, container, false);
         eventList = new ArrayList<>();
         recyclerViewSisda = view.findViewById(R.id.recyclerview);

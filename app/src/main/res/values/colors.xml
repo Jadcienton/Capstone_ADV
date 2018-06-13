@@ -7,4 +7,7 @@
     <color name="progress_good">#388E3C</color>
     <color name="progress_warning">#D32F2F</color>
     <color name="progess_caution">#FBC02D</color>
+    <color name="refresh">#2962ff</color>
+    <color name="refresh1">#0d47a1</color>
+    <color name="refresh2">#0a3679</color>
 </resources>
