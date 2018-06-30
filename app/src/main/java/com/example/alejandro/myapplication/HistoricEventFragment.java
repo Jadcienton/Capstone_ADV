@@ -200,7 +200,11 @@ public class HistoricEventFragment extends Fragment  {
                         String qNPa = jsObject.getString("name_pavement");
                         String qFSP = jsObject.getString("fathersurname_pavement");
 
-                        eventList.add(new Sisda(qS,qPE,ConvertUpper(qLE),ConvertUpper(qOE),ConvertUpper(qFE),ConvertUpper(qSE),ConvertUpper(qAC),qNC ,qDN,ConvertUpper(qCC),ConvertUpper(qCCu),ConvertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC,ConvertUpper(qSCC),ConvertUpper(qACu),qCCus,ConvertUpper(qNP),qFPNP,qSPNP,EventDetail.DateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE,ConvertUpper(qNA) + " "+ ConvertUpper(qFSA),ConvertUpper(qNB) + " "+  ConvertUpper(qFSB),ConvertUpper(qNH) +  " "+ ConvertUpper(qFSH),ConvertUpper(qND) + " "+  ConvertUpper(qFSD),ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),"",""));
+                        eventList.add(new Sisda(qS,qPE,ConvertUpper(qLE),ConvertUpper(qOE),ConvertUpper(qFE),ConvertUpper(qSE),ConvertUpper(qAC),qNC ,qDN,ConvertUpper(qCC),
+                                ConvertUpper(qCCu),ConvertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC,ConvertUpper(qSCC),ConvertUpper(qACu),qCCus,ConvertUpper(qNP),qFPNP,
+                                qSPNP,EventDetail.DateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE,ConvertUpper(qNA) + " "+ ConvertUpper(qFSA),ConvertUpper(qNB) + " "+  ConvertUpper(qFSB),
+                                ConvertUpper(qNH) +  " "+ ConvertUpper(qFSH),ConvertUpper(qND) + " "+  ConvertUpper(qFSD),
+                                ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),"",""));
                     }
                     RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList); //view
                     recyclerViewSisda.setAdapter(adapter);
