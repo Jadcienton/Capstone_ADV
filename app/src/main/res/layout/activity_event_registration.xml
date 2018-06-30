@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventDetail"
+    android:theme="@style/AppTheme.NoActionBar"
+    android:id="@+id/coordinatorlayout_detail">
+    <!--    <com.google.android.gms.maps.MapView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"></com.google.android.gms.maps.MapView>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_comments_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="normal"
+        android:src="@drawable/ic_comments"
+        app:layout_anchor="@+id/scrollView2"
+        app:layout_anchorGravity="right|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"/>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/map" />
+            <!-- Bloque Temporizador -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@color/progress_good"
+                android:elevation="0dp">
+                <LinearLayout
+                    android:id="@+id/text_remaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TIEMPO RESTANTE PARA "
+                        android:textColor="@android:color/white"
+                        />
+                    <TextView
+                        android:id="@+id/remaining"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LLEGADA A TERRENO"
+                        android:textColor="@android:color/white"
+                        />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/time_remaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1:59"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:layout_below="@+id/text_remaining"
+                    android:gravity="center"/>
+
+            </RelativeLayout>
+
+            <!-- Bloque SISDA -->
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/ic_sisda" />
+
+                <TextView
+                    android:id="@+id/text_sisda_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/sisda"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/sisda_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_sisda_detail"
+                    android:text="1845287" />
+
+                <TextView
+                    android:id="@+id/text_creation_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/fecha_de_ingreso"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/sisda_detail"/>
+
+                <TextView
+                    android:id="@+id/creation_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_sisda_detail"
+                    android:layout_toEndOf="@+id/text_creation_date_detail"/>
+                <TextView
+                    android:id="@+id/text_arrival_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Llegada a Terreno:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_creation_date_detail"/>
+
+                <TextView
+                    android:id="@+id/arrival_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_creation_date_detail"
+                    android:layout_toEndOf="@+id/text_arrival_date_detail"/>
+
+                <TextView
+                    android:id="@+id/text_beginning_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Inicio de Faena:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_arrival_date_detail"/>
+
+                <TextView
+                    android:id="@+id/beginning_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_arrival_date_detail"
+                    android:layout_toEndOf="@+id/text_beginning_date_detail"/>
+                <TextView
+                    android:id="@+id/text_hydraulic_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Finaliz. Hidráulica:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_beginning_date_detail"/>
+
+                <TextView
+                    android:id="@+id/hydraulic_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_beginning_date_detail"
+                    android:layout_toEndOf="@+id/text_hydraulic_date_detail"/>
+                <TextView
+                    android:id="@+id/text_pavement_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Finaliz. Pavimento:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_hydraulic_date_detail"/>
+
+                <TextView
+                    android:id="@+id/pavement_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/hydraulic_date_detail"
+                    android:layout_toEndOf="@+id/text_pavement_date_detail"/>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_fault" />
+
+                <TextView
+                    android:id="@+id/text_level_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/nivel"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/level_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_level_registration"
+                    android:text="Alcantarillado Domicilio" />
+
+                <TextView
+                    android:id="@+id/text_object_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_level_registration"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/objeto"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/object_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_level_registration"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_object_registration"
+                    android:text="Camara Interior" />
+
+                <TextView
+                    android:id="@+id/text_fault_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_object_registration"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/falla"
+                    android:textColor="#000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/fault_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_object_registration"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@+id/text_fault_registration"
+                    android:text="Rebalsando" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/text_arrival_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="Hora de llegada: " />
+
+                <TextView
+                    android:id="@+id/arrival_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/text_arrival_time"
+                    android:paddingStart="8dp"
+                    android:text="8:35:10" />
+                <Button
+                    android:id="@+id/bt_arrival"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Marcar Llegada"
+                    android:layout_alignParentEnd="true"
+                    android:enabled="true"/>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/bt_pic_beginning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_photo_camera_black_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toEndOf="@+id/bt_pic_beginning"
+                    android:padding="8dp"
+                    android:text="Tomar Fotografia" />
+                <Button
+                    android:id="@+id/bt_beginning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Marcar Inicio"
+                    android:layout_alignParentEnd="true"
+                    android:enabled="false"/>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/bt_pic_hydraulic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_photo_camera_black_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toEndOf="@+id/bt_pic_hydraulic"
+                    android:padding="8dp"
+                    android:text="Tomar Fotografia" />
+                <Button
+                    android:id="@+id/bt_hydraulic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fin. Hidráulica"
+                    android:layout_alignParentEnd="true"
+                    android:enabled="false"/>
+            </RelativeLayout>
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/bt_pic_pavement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_photo_camera_black_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/bt_pic_pavement"
+                    android:padding="8dp"
+                    android:text="Tomar Fotografia" />
+                <Button
+                    android:id="@+id/bt_pavement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fin. Pavimento"
+                    android:layout_alignParentEnd="true"
+                    android:enabled="false"/>
+            </RelativeLayout>
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

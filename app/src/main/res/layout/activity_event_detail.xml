@@ -6,7 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".EventDetail"
     android:id="@+id/coordinatorlayout_detail">
-<!--    <com.google.android.gms.maps.MapView
+<!-- <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/map" />
+<com.google.android.gms.maps.MapView
         android:layout_width="match_parent"
         android:layout_height="250dp"></com.google.android.gms.maps.MapView>-->
     <android.support.design.widget.FloatingActionButton
@@ -18,34 +22,67 @@
         app:layout_anchor="@+id/scrollView2"
         app:layout_anchorGravity="right|bottom"
         android:layout_margin="@dimen/fab_margin"/>
-
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ImageView
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map_detail"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:src="@drawable/map" />
-
+                android:layout_height="250dp"></com.google.android.gms.maps.MapView>
+            <!-- Bloque Temporizador -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@color/progress_good"
+                android:elevation="0dp">
+                <LinearLayout
+                    android:id="@+id/text_remaining_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TIEMPO RESTANTE PARA "
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/remaining_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LLEGADA A TERRENO"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/time_remaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1:59"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:layout_below="@+id/text_remaining_detail"
+                    android:gravity="center"/>
+            </RelativeLayout>
             <!-- Bloque SISDA -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp">
-
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:src="@drawable/ic_sisda" />
-
                 <TextView
                     android:id="@+id/text_sisda_detail"
                     android:layout_width="wrap_content"
@@ -54,7 +91,6 @@
                     android:text="@string/sisda"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/sisda_detail"
                     android:layout_width="wrap_content"
@@ -62,7 +98,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_sisda_detail"
                     android:text="1845287" />
-
                 <TextView
                     android:id="@+id/text_creation_date_detail"
                     android:layout_width="wrap_content"
@@ -72,7 +107,6 @@
                     android:textColor="#000"
                     android:textStyle="bold"
                     android:layout_below="@+id/sisda_detail"/>
-
                 <TextView
                     android:id="@+id/creation_date_detail"
                     android:layout_width="wrap_content"
@@ -90,7 +124,6 @@
                     android:textColor="#000"
                     android:textStyle="bold"
                     android:layout_below="@+id/text_creation_date_detail"/>
-
                 <TextView
                     android:id="@+id/arrival_date_detail"
                     android:layout_width="wrap_content"
@@ -99,26 +132,71 @@
                     android:layout_marginStart="8dp"
                     android:layout_below="@+id/text_creation_date_detail"
                     android:layout_toEndOf="@+id/text_arrival_date_detail"/>
-
-
+                <TextView
+                    android:id="@+id/text_beginning_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Inicio de Faena:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_arrival_date_detail"/>
+                <TextView
+                    android:id="@+id/beginning_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06-05-2018 14:30"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_arrival_date_detail"
+                    android:layout_toEndOf="@+id/text_beginning_date_detail"/>
+                <TextView
+                    android:id="@+id/text_hydraulic_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Finaliz. Hidráulica:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_beginning_date_detail"/>
+                <TextView
+                    android:id="@+id/hydraulic_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06-05-2018 14:30"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/text_beginning_date_detail"
+                    android:layout_toEndOf="@+id/text_hydraulic_date_detail"/>
+                <TextView
+                    android:id="@+id/text_pavement_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:text="Finaliz. Pavimento:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/text_hydraulic_date_detail"/>
+                <TextView
+                    android:id="@+id/pavement_date_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06-05-2018 14:30"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@+id/hydraulic_date_detail"
+                    android:layout_toEndOf="@+id/text_pavement_date_detail"/>
             </RelativeLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@color/divider" />
-
             <!-- Bloque Cliente -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp">
-
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_customer" />
-
                 <TextView
                     android:id="@+id/text_customer_number_detail"
                     android:layout_width="wrap_content"
@@ -127,7 +205,6 @@
                     android:text="@string/numero_del_cliente"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/customer_number_detail"
                     android:layout_width="wrap_content"
@@ -135,7 +212,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_customer_number_detail"
                     android:text="1059706" />
-
                 <TextView
                     android:id="@+id/text_customer_detail"
                     android:layout_width="wrap_content"
@@ -145,7 +221,6 @@
                     android:text="@string/cliente"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/customer_detail"
                     android:layout_width="wrap_content"
@@ -154,7 +229,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_customer_detail"
                     android:text="Miguel Hernandez" />
-
                 <TextView
                     android:id="@+id/text_phone_detail"
                     android:layout_width="wrap_content"
@@ -164,7 +238,6 @@
                     android:text="@string/tel_fono"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/phone_detail"
                     android:layout_width="wrap_content"
@@ -173,12 +246,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_phone_detail"
                     android:text="997450881"
-
                     />
-
             </RelativeLayout>
-
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
@@ -188,12 +257,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp">
-
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_location" />
-
                 <TextView
                     android:id="@+id/text_address_detail"
                     android:layout_width="wrap_content"
@@ -202,7 +269,6 @@
                     android:text="@string/calle"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/address_detail"
                     android:layout_width="wrap_content"
@@ -210,7 +276,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_address_detail"
                     android:text="Victor Salas" />
-
                 <TextView
                     android:id="@+id/text_number_detail"
                     android:layout_width="wrap_content"
@@ -220,7 +285,6 @@
                     android:text="@string/numero"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/number_detail"
                     android:layout_width="wrap_content"
@@ -229,7 +293,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_number_detail"
                     android:text="1331" />
-
                 <TextView
                     android:id="@+id/text_dep_detail"
                     android:layout_width="wrap_content"
@@ -239,7 +302,6 @@
                     android:text="@string/depto"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/dep_detail"
                     android:layout_width="wrap_content"
@@ -248,7 +310,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_dep_detail"
                     android:text="-" />
-
                 <TextView
                     android:id="@+id/text_city_detail"
                     android:layout_width="wrap_content"
@@ -258,7 +319,6 @@
                     android:text="@string/localidad"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/city_detail"
                     android:layout_width="wrap_content"
@@ -267,7 +327,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_city_detail"
                     android:text="La Serena" />
-
                 <TextView
                     android:id="@+id/text_corner_detail"
                     android:layout_width="wrap_content"
@@ -277,7 +336,6 @@
                     android:text="@string/esquina"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/corner_detail"
                     android:layout_width="wrap_content"
@@ -286,7 +344,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@+id/text_corner_detail"
                     android:text="La Colina" />
-
                 <TextView
                     android:id="@+id/text_ref_detail"
                     android:layout_width="wrap_content"
@@ -296,7 +353,6 @@
                     android:text="@string/referencia"
                     android:textColor="#000"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/ref_detail"
                     android:layout_width="wrap_content"
@@ -306,13 +362,10 @@
                     android:layout_toEndOf="@+id/text_ref_detail"
                     android:text="Sector Colina El Pino" />
             </RelativeLayout>
-
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@color/divider" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -378,12 +431,10 @@
                     android:layout_toEndOf="@+id/text_fault_detail"
                     android:text="Rebalsando" />
             </RelativeLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:background="@color/divider" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -526,17 +577,12 @@
                     android:text="Residencia" />
 
             </RelativeLayout>
-
         </LinearLayout>
     </ScrollView>
-
-
-
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_detail"
             android:layout_width="match_parent"
@@ -544,7 +590,4 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
-
-
-
 </android.support.design.widget.CoordinatorLayout>

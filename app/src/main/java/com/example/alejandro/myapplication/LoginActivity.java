@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!FillEmpty()) {
-                    ConsultaClave("http://192.168.43.7/adv/Login.php?RUT_LOGIN=" + rut.getText().toString());
+                    ConsultaClave("http://192.168.15.35/adv/Login.php?RUT_LOGIN=" + rut.getText().toString());
                 }
             }
         });
@@ -124,8 +124,11 @@ public class LoginActivity extends AppCompatActivity {
                         String qPass = jsObject.getString("password_user");
                         String qRut = jsObject.getString("rut_user");
                         String qRol = jsObject.getString("rol_user");
+                        String qName=jsObject.getString("name_user");
+                        String qSurname=jsObject.getString("fathersurname_user");
+                        String qEmail=jsObject.getString("email_user");
                         if (qPass.equals(pass.getText().toString())) {
-                            RolManagement(qRol, qRut);
+                            RolManagement(qRol, qName+" "+qSurname,qEmail);
                         } else {
                             Toast.makeText(getApplicationContext(), "Contraseña inválida", Toast.LENGTH_SHORT).show();
                             progreso.hide();
@@ -147,15 +150,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void RolManagement(String rol, String qRut) {
+    public void RolManagement(String rol, String qName,String qEmail) {
+        Preferences.SavePreferenceStringName(LoginActivity.this, qName, Preferences.UsuarioLogin);
+        Preferences.SavePreferenceStringEmail(LoginActivity.this, qEmail, Preferences.UsuarioLoginEmail);
 
         if (rol.equals("Gerente")) {
             Toast.makeText(getApplicationContext(), "Gerencia", Toast.LENGTH_SHORT).show();
             session.setLoggedin(true);
             Intent login = new Intent(LoginActivity.this, MainActivity.class);
-           /*Bundle miBundle = new Bundle();
-            miBundle.putString("UserName",qRut);
-            login.putExtras(miBundle)*/
             startActivity(login);
             finish();
         } else if (rol.equals("Contratista")) {

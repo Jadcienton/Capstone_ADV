@@ -13,11 +13,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener {
     private Session session;
     private ProgressDialog progress;
+    private String Name ="";
+    private String Email ="";
+    private TextView UserTest,EmailTest;
+   /* private TextView textName,textEmail; //HOLA
+    private String name,surname,email; //hola*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,15 +31,28 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         session = new Session(this);
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container,new DailyEventFragment()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
+        Name = Preferences.ObtenerPreferenceStringName(this,Preferences.UsuarioLogin);
+        Email = Preferences.ObtenerPreferenceStringEmail(this,Preferences.UsuarioLoginEmail);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+       /* textName= findViewById(R.id.NameHeader);
+        textEmail= findViewById(R.id.EmailHeader);
+        Intent login = getIntent();
+        Bundle miBundle = login.getExtras();
+        name= miBundle.getString("UserName");
+        surname= miBundle.getString("Surname");
+        email= miBundle.getString("Email");
+        textName.setText(name+" "+surname);
+        textEmail.setText(email);*/
+
+
+
     }
 
     @Override
@@ -50,6 +69,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        UserTest = findViewById(R.id.name_header);
+        EmailTest = findViewById(R.id.email_header);
+        UserTest.setText(Name);
+        EmailTest.setText(Email);
         return true;
     }
 
@@ -72,10 +95,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        DailyEventFragment fragmento = null;
+        //DailyEventFragment fragmento = null;
 
         int id = item.getItemId();
-        if (id == R.id.nav_camera) {
+        if (id == R.id.home) {
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+
+        } else if (id == R.id.nav_camera) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new DailyEventFragment()).commit();
 
         } else if (id == R.id.nav_gallery) {
@@ -83,6 +109,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
             Intent intent = new Intent(this,Eventsmap.class);
+            startActivity(intent);
+        } else if (id == R.id.test) {
+            Intent intent = new Intent(this,EventRegistration.class);
             startActivity(intent);
 
 

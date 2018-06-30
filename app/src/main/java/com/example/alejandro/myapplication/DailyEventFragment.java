@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,6 +25,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,9 +47,10 @@ import static com.android.volley.VolleyLog.TAG;
  * Use the {@link DailyEventFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DailyEventFragment extends Fragment {
+public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private GoogleMap mMap;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -79,7 +84,8 @@ public class DailyEventFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+       // SupportMapFragment mapFragment = findFragmentById(R.id.map_detail);
+        //mapFragment.getMapAsync(this);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -145,6 +151,15 @@ public class DailyEventFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        LatLng adv = new LatLng(-29.928119,-71.242348);
+        mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -161,6 +176,7 @@ public class DailyEventFragment extends Fragment {
     }
     private void pushSisda(){
 
+/*
         eventList.add(new Sisda("152489","P1","Estadio 3333, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
         eventList.add(new Sisda("456813","P1","Larrondo 1281, Coquimbo","Agua Potable Sector","En Ejecución","Retrasado","-0:54:01"));
         eventList.add(new Sisda("152789","P2","Gabriela Mistral 4001, La Serena","Alcantarillado Sector","En Camino","A Tiempo","1:48:21"));
@@ -172,6 +188,7 @@ public class DailyEventFragment extends Fragment {
         eventList.add(new Sisda("152465","P2","Balmaceda 328, La Serena","Agua Potable Domicilio","En Ejecución","A Tiempo","1:00:00"));
         eventList.add(new Sisda("152424","P1","Larrain Alcalde SN, La Serena","Alcantarillado Sector","En Camino","A Tiempo","0:54:01"));
 
+*/
 
     }
     public void sisdaQuery(String url){
@@ -197,7 +214,7 @@ public class DailyEventFragment extends Fragment {
                                 // Get current json object
                                 JSONObject sisda = response.getJSONObject(i);
                                 Log.d(TAG, " " + response.length());
-                                eventList.add(new Sisda(sisda.getString("SISDA_EVENT"),"P"+sisda.getString("SISDA_EVENT"),sisda.getString("ADDRESS_COSTUMER")+" "+sisda.getString("NUMBER_COSTUMBER"),"Alcantarillado Sector",sisda.getString("STATE_EVENT"),"A Tiempo","0:54:01"));
+                                //eventList.add(new Sisda(sisda.getString("SISDA_EVENT"),"P"+sisda.getString("SISDA_EVENT"),sisda.getString("ADDRESS_COSTUMER")+" "+sisda.getString("NUMBER_COSTUMBER"),"Alcantarillado Sector",sisda.getString("STATE_EVENT"),"A Tiempo","0:54:01"));
 
                             }
                         }catch (JSONException e){

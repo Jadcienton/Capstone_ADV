@@ -54,12 +54,15 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        sisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
+        sisdaQuery("http://192.168.15.35/adv/EventosDiarios.php");
         Log.d(TAG, "onMapReady: "+ markers.size());
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         LatLng adv = new LatLng(-29.928119,-71.242348);
-        mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del valle").snippet("hola").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(-29.9430602,-71.2565423)).title("SISDA: 1254862 P1 ").snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(-29.9165558,-71.2577062)).title("SISDA: 1254863 P2 ").snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(-71.2577062,-71.2956232)).title("SISDA: 1254836 P1 ").snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
+        mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));
 
 
@@ -96,13 +99,13 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
                                 Log.d(TAG, "LA URL ES: " +sisda.getString("state_event"));
                                 switch (sisda.getString("state_event")) {
                                     case "En Camino":
-                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("state_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("status_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
                                         break;
                                     case "Ejecución":
-                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("state_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("status_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
                                         break;
                                     case "En Inspección":
-                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("state_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
+                                        mMap.addMarker(new MarkerOptions().position(markers.get(i)).title("SISDA: " + sisda.getString("sisda_event") + "  P" + sisda.getInt("priority_event")).snippet(sisda.getString("status_event")).icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
                                         break;
                                 }
                             }
