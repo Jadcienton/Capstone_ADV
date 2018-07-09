@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, EventRegisterFragment.OnFragmentInteractionListener {
     private Session session;
     private ProgressDialog progress;
     private String Name ="";
@@ -111,8 +111,9 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this,Eventsmap.class);
             startActivity(intent);
         } else if (id == R.id.test) {
-            Intent intent = new Intent(this,EventRegistration.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this,EventRegistration.class);
+           //startActivity(intent);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new EventRegisterFragment()).commit();
 
 
         } else if (id == R.id.nav_share) {

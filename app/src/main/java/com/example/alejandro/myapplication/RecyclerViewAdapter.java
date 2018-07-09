@@ -2,7 +2,6 @@ package com.example.alejandro.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,17 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Until;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -29,9 +21,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<Sisda> mSisdas;
     private Context mContext;
-    public RecyclerViewAdapter(Context mContext, ArrayList<Sisda> mSisdas) {
+    private String type;
+    public RecyclerViewAdapter(Context mContext, ArrayList<Sisda> mSisdas,String type) {
         this.mSisdas = mSisdas;
         this.mContext = mContext;
+        this.type = type; //register or detail
     }
 
     @NonNull
@@ -52,18 +46,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.progress.setText(mSisdas.get(position).getStatus()); //PROGRESO
         holder.delay.setText(mSisdas.get(position).getDelay());
         holder.time.setText(mSisdas.get(position).getTime());
-        holder.Start.setText("Generado el: "+mSisdas.get(position).getDateCreation()); //AGREGADO
-        if(mSisdas.get(position).getTime().equals("1:00:00") && mSisdas.get(position).getDelay().equals("A Tiempo"))
+        holder.start.setText("Generado el: "+mSisdas.get(position).getDateCreation()); //AGREGADO
+        if(mSisdas.get(position).getDelay().equals("A Tiempo A")) {
+            holder.delay.setText("A Tiempo");
             holder.delay.setBackgroundResource(R.drawable.bg_progress_caution);
-        else if (mSisdas.get(position).getDelay().equals("Retrasado"))
+        }else if (mSisdas.get(position).getDelay().equals("Retrasado")) {
             holder.delay.setBackgroundResource(R.drawable.bg_progress_warning);
-        else if (mSisdas.get(position).getDelay().equals("A Tiempo"))
+        }else if (mSisdas.get(position).getDelay().equals("A Tiempo"))
             holder.delay.setBackgroundResource(R.drawable.bg_progress_good);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: "+ mSisdas.get(position).getSisda());
+                if (type.equals("detail"))
                 openSisdaDetail(mSisdas.get(position)/*mSisdas.get(position).getmSisdas()*/);
+                else if (type.equals("register"))
+                openSisdaRegister(mSisdas.get(position)/*mSisdas.get(position).getmSisdas()*/);
             }
         });
     }
@@ -73,6 +71,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Gson gson = new Gson();
         String sisdaData = gson.toJson(sisdaObject);
         Intent intent = new Intent(mContext,EventDetail.class);
+        Bundle miBundle = new Bundle();
+        miBundle.putString("detailSisda",sisdaData);
+        intent.putExtras(miBundle);
+        mContext.startActivity(intent);
+
+    }
+    public void openSisdaRegister(Sisda sisdaObject){
+        Gson gson = new Gson();
+        String sisdaData = gson.toJson(sisdaObject);
+        Intent intent = new Intent(mContext,EventRegistration.class);
         Bundle miBundle = new Bundle();
         miBundle.putString("detailSisda",sisdaData);
         intent.putExtras(miBundle);
@@ -92,7 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView progress;
         TextView delay;
         TextView time;
-        TextView Start;
+        TextView start;
         RelativeLayout parentLayout;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -104,7 +112,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             delay = itemView.findViewById(R.id.delay);
             time = itemView.findViewById(R.id.time);
             parentLayout = itemView.findViewById(R.id.parent_layout);
-            Start = itemView.findViewById(R.id.init_time); //AGREGADO
+            start = itemView.findViewById(R.id.init_time); //AGREGADO
         }
     }
 }

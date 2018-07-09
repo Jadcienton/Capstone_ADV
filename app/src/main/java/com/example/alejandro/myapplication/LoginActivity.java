@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!FillEmpty()) {
-                    ConsultaClave("http://192.168.15.35/adv/Login.php?RUT_LOGIN=" + rut.getText().toString());
+                    ConsultaClave("http://192.168.43.7/adv/Login.php?RUT_LOGIN=" + rut.getText().toString());
                 }
             }
         });

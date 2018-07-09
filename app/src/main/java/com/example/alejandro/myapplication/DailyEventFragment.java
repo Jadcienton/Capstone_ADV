@@ -103,7 +103,7 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
         recyclerViewSisda.setLayoutManager(new LinearLayoutManager(view.getContext()));
         pushSisda();
         //sisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
-        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList, "detail");
         Log.d(TAG, "hola");
         recyclerViewSisda.setAdapter(adapter);
 

@@ -37,13 +37,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HistoricEventFragment.OnFragmentInteractionListener} interface
+ * {@link EventRegisterFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HistoricEventFragment#newInstance} factory method to
+ * Use the {@link EventRegisterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoricEventFragment extends Fragment  {
-    private static final String TAG = "HistoricEventFragment";
+public class EventRegisterFragment extends Fragment {
+    private static final String TAG = "EventRegisterFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,7 +62,8 @@ public class HistoricEventFragment extends Fragment  {
     RecyclerView recyclerViewSisda;
     ArrayList<Sisda> eventList;
 
-    public HistoricEventFragment() {
+
+    public EventRegisterFragment() {
         // Required empty public constructor
     }
 
@@ -72,11 +73,11 @@ public class HistoricEventFragment extends Fragment  {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoricEventFragment.
+     * @return A new instance of fragment EventRegisterFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HistoricEventFragment newInstance(String param1, String param2) {
-        HistoricEventFragment fragment = new HistoricEventFragment();
+    public static EventRegisterFragment newInstance(String param1, String param2) {
+        EventRegisterFragment fragment = new EventRegisterFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -96,7 +97,7 @@ public class HistoricEventFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Eventos Históricos");
+        getActivity().setTitle("Registro de Eventos");
         View view = inflater.inflate(R.layout.fragment_historic_event, container, false);
         eventList = new ArrayList<>();
         recyclerViewSisda = view.findViewById(R.id.recyclerview);
@@ -131,8 +132,6 @@ public class HistoricEventFragment extends Fragment  {
         mListener = null;
     }
 
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -159,7 +158,7 @@ public class HistoricEventFragment extends Fragment  {
         final int pavimentoAmarillo = 1; //dias
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest  stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -324,7 +323,7 @@ public class HistoricEventFragment extends Fragment  {
                                         delay = "Retrasado";
                                     }
                                     break;
-                                    //TODO arreglar pavimentacion
+                                //TODO arreglar pavimentacion
                                 case "pavimento":
                                     if (TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))<pavimento) {//A Tiempo
                                         Log.d(TAG, "onResponse: A tiempo " + TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
@@ -374,7 +373,7 @@ public class HistoricEventFragment extends Fragment  {
                                 ConvertUpper(qNH) +  " "+ ConvertUpper(qFSH),ConvertUpper(qND) + " "+  ConvertUpper(qFSD),
                                 ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,""));
                     }
-                    RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
+                    RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "register"); //view
                     recyclerViewSisda.setAdapter(adapter);
                 }
                 catch (JSONException e)
@@ -394,7 +393,7 @@ public class HistoricEventFragment extends Fragment  {
     }
 
     private static String ConvertUpper(String word)
-            //TODO agregar En Camino, Pavimento
+    //TODO agregar En Camino, Pavimento
     {
         if (word.equals(""))
         {
@@ -423,5 +422,4 @@ public class HistoricEventFragment extends Fragment  {
             return word;
         }
     }
-
 }

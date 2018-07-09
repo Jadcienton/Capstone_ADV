@@ -10,6 +10,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">Iniciar Sesión</string>
+    <string name="url_api">192.168.43.7</string>
 
     <!-- Strings related to login -->
     <string name="prompt_rut">RUT</string>

@@ -1,15 +1,16 @@
 package com.example.alejandro.myapplication;
 
 public class Sisda {
-    private String sisda, priority,level, object, fault, status;
-    private String address, number, department, city, corner, reference, lat, lng, pipeDiameter, pipeMaterial, sewerDiameter, sewerMaterial, waterMeterQuantity, socialClient, activityCustomer;
+    private String sisda, priority,level, object, fault, status, synergiaStatus;
+    private String address, number, department, city, corner, reference, pipeDiameter, pipeMaterial, sewerDiameter, sewerMaterial, waterMeterQuantity, socialClient, activityCustomer;
+    private String lat, lng, latArrival, lngArrival, latBeginning, lngBeginning, latHydraulic, lngHydraulic, latPavement, lngPavement;
     private String codeCustomer, clientName, clientPhone, clientPhoneTwo;
     private String dateCreation, dateArrival, dateBeginning, dateHydraulic, dateDefinitive, datePavement; // TODO cambiar a tipo fecha los date
     private String arrivalUser, beginningUser, hydraulicUser, definitiveUser, pavementUser;
     private String Delay, Time;
 
 
-    public Sisda(String sisda, String priority, String level, String object, String fault, String status, String address, String number, String department, String city, String corner, String reference, String lat, String lng, String pipeDiameter, String pipeMaterial, String sewerDiameter, String sewerMaterial, String waterMeterQuantity, String socialClient, String activityCustomer, String codeCustomer, String clientName, String clientPhone,String clientPhoneTwo, String dateCreation, String dateArrival, String dateBeginning, String dateHydraulic, String dateDefinitive, String datePavement, String arrivalUser, String beginningUser, String hydraulicUser, String definitiveUser, String pavementUser , String Delay, String Time) {
+    public Sisda(String sisda, String priority, String level, String object, String fault, String status, String address, String number, String department, String city, String corner, String reference, String lat, String lng, String pipeDiameter, String pipeMaterial, String sewerDiameter, String sewerMaterial, String waterMeterQuantity, String socialClient, String activityCustomer, String codeCustomer, String clientName, String clientPhone,String clientPhoneTwo, String dateCreation, String dateArrival, String dateBeginning, String dateHydraulic, String dateDefinitive, String datePavement, String arrivalUser, String beginningUser, String hydraulicUser, String definitiveUser, String pavementUser , String Delay, String Time,String latArrival, String lngArrival, String latBeginning, String lngBeginning, String latHydraulic, String lngHydraulic, String latPavement, String lngPavement,String synergiaStatus) {
         this.sisda = sisda;
         this.priority = priority;
         this.level = level;
@@ -48,6 +49,15 @@ public class Sisda {
         this.pavementUser = pavementUser;
         this.Delay = Delay;
         this.Time = Time;
+        this.latArrival = latArrival;
+        this.lngArrival = lngArrival;
+        this.latBeginning = latBeginning;
+        this.lngBeginning = lngBeginning;
+        this.latHydraulic = latHydraulic;
+        this.lngHydraulic = lngHydraulic;
+        this.latPavement = latPavement;
+        this.lngPavement = lngPavement;
+        this.synergiaStatus = synergiaStatus;
     }
 
     public String getSisda() {
@@ -198,5 +208,37 @@ public class Sisda {
     }
     public String getTime() {
         return Time;
+    }
+
+    public String getLatArrival() {
+        return latArrival;
+    }
+
+    public String getLngArrival() {
+        return lngArrival;
+    }
+
+    public String getLatBeginning() {
+        return latBeginning;
+    }
+
+    public String getLngBeginning() {
+        return lngBeginning;
+    }
+
+    public String getLatHydraulic() {
+        return latHydraulic;
+    }
+
+    public String getLngHydraulic() {
+        return lngHydraulic;
+    }
+
+    public String getLatPavement() {
+        return latPavement;
+    }
+
+    public String getLngPavement() {
+        return lngPavement;
     }
 }
