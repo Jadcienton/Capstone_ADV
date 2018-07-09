@@ -235,6 +235,7 @@ public class EventRegisterFragment extends Fragment {
                         String qLngH = jsObject.getString("lng_hydraulic_event");
                         String qLatP = jsObject.getString("lat_pavement_event");
                         String qLngP = jsObject.getString("lng_pavement_event");
+                        String qSS = jsObject.getString("synergia_status_event");
 
 
                         Calendar now = GregorianCalendar.getInstance();
@@ -371,7 +372,7 @@ public class EventRegisterFragment extends Fragment {
                                 ConvertUpper(qCCu),ConvertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC,ConvertUpper(qSCC),ConvertUpper(qACu),qCCus,ConvertUpper(qNP),qFPNP,
                                 qSPNP,EventDetail.dateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE,ConvertUpper(qNA) + " "+ ConvertUpper(qFSA),ConvertUpper(qNB) + " "+  ConvertUpper(qFSB),
                                 ConvertUpper(qNH) +  " "+ ConvertUpper(qFSH),ConvertUpper(qND) + " "+  ConvertUpper(qFSD),
-                                ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,""));
+                                ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,qSS));
                     }
                     RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "register"); //view
                     recyclerViewSisda.setAdapter(adapter);
