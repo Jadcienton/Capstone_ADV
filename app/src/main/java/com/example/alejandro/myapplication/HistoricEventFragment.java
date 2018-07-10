@@ -236,6 +236,7 @@ public class HistoricEventFragment extends Fragment  {
                         String qLngH = jsObject.getString("lng_hydraulic_event");
                         String qLatP = jsObject.getString("lat_pavement_event");
                         String qLngP = jsObject.getString("lng_pavement_event");
+                        String qSS = jsObject.getString("synergia_status_event");
 
 
                         Calendar now = GregorianCalendar.getInstance();
@@ -368,11 +369,11 @@ public class HistoricEventFragment extends Fragment  {
                         }
 
 
-                        eventList.add(new Sisda(qS,qPE,ConvertUpper(qLE),ConvertUpper(qOE),ConvertUpper(qFE),ConvertUpper(qSE),ConvertUpper(qAC),qNC ,qDN,ConvertUpper(qCC),
-                                ConvertUpper(qCCu),ConvertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC,ConvertUpper(qSCC),ConvertUpper(qACu),qCCus,ConvertUpper(qNP),qFPNP,
-                                qSPNP,EventDetail.dateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE,ConvertUpper(qNA) + " "+ ConvertUpper(qFSA),ConvertUpper(qNB) + " "+  ConvertUpper(qFSB),
-                                ConvertUpper(qNH) +  " "+ ConvertUpper(qFSH),ConvertUpper(qND) + " "+  ConvertUpper(qFSD),
-                                ConvertUpper(qNPa) + " "+  ConvertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,""));
+                        eventList.add(new Sisda(qS,qPE, convertUpper(qLE), convertUpper(qOE), convertUpper(qFE), convertUpper(qSE), convertUpper(qAC),qNC ,qDN, convertUpper(qCC),
+                                convertUpper(qCCu), convertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC, convertUpper(qSCC), convertUpper(qACu),qCCus, convertUpper(qNP),qFPNP,
+                                qSPNP,EventDetail.dateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE, convertUpper(qNA) + " "+ convertUpper(qFSA), convertUpper(qNB) + " "+  convertUpper(qFSB),
+                                convertUpper(qNH) +  " "+ convertUpper(qFSH), convertUpper(qND) + " "+  convertUpper(qFSD),
+                                convertUpper(qNPa) + " "+  convertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,qSS));
                     }
                     RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
                     recyclerViewSisda.setAdapter(adapter);
@@ -393,7 +394,7 @@ public class HistoricEventFragment extends Fragment  {
         queue.add(stringRequest);
     }
 
-    private static String ConvertUpper(String word)
+    private static String convertUpper(String word)
             //TODO agregar En Camino, Pavimento
     {
         if (word.equals(""))

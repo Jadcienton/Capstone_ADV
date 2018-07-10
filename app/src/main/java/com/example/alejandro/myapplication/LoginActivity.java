@@ -1,16 +1,7 @@
 package com.example.alejandro.myapplication;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -61,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
         rut = findViewById(R.id.rut_usr);
         pass = findViewById(R.id.password);
         lB = findViewById(R.id.email_sign_in_button);
+
+
+
         lB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +63,23 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String formateaRut(String rut) {
+        int cont = 0;
+        String format;
+        rut = rut.replace(".", "");
+        rut = rut.replace("-", "");
+        format = "-" + rut.substring(rut.length() - 1);
+        for (int i = rut.length() - 2; i >= 0; i--) {
+            format = rut.substring(i, i + 1) + format;
+            cont++;
+            if (cont == 3 && i != 0) {
+                format = "." + format;
+                cont = 0;
+            }
+        }
+        return format;
     }
 
     public static boolean RutValidation(String rut) {
@@ -128,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                         String qSurname=jsObject.getString("fathersurname_user");
                         String qEmail=jsObject.getString("email_user");
                         if (qPass.equals(pass.getText().toString())) {
-                            RolManagement(qRol, qName+" "+qSurname,qEmail);
+                            RolManagement(qRol, qName+" "+qSurname,qEmail,qRut,qRol);
                         } else {
                             Toast.makeText(getApplicationContext(), "Contraseña inválida", Toast.LENGTH_SHORT).show();
                             progreso.hide();
@@ -150,9 +161,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void RolManagement(String rol, String qName,String qEmail) {
-        Preferences.SavePreferenceStringName(LoginActivity.this, qName, Preferences.UsuarioLogin);
-        Preferences.SavePreferenceStringEmail(LoginActivity.this, qEmail, Preferences.UsuarioLoginEmail);
+    public void RolManagement(String rol, String qName,String qEmail,String qRut,String qRol) {
+        Preferences.savePreferenceStringName(LoginActivity.this, qName, Preferences.usuarioLogin);
+        Preferences.savePreferenceStringEmail(LoginActivity.this, qEmail, Preferences.usuarioLoginEmail);
+        Preferences.savePreferenceStringRut(LoginActivity.this, qRut, Preferences.usuarioRut);
+        Preferences.savePreferenceStringRol(LoginActivity.this, qRol, Preferences.usuarioRol);
 
         if (rol.equals("Gerente")) {
             Toast.makeText(getApplicationContext(), "Gerencia", Toast.LENGTH_SHORT).show();
@@ -162,8 +175,16 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else if (rol.equals("Contratista")) {
             Toast.makeText(getApplicationContext(), "Contratista", Toast.LENGTH_SHORT).show();
+            session.setLoggedin(true);
+            Intent login = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(login);
+            finish();
         } else if (rol.equals("Inspector")) {
             Toast.makeText(getApplicationContext(), "Inspector", Toast.LENGTH_SHORT).show();
+            session.setLoggedin(true);
+            Intent login = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(login);
+            finish();
         }
         progreso.hide();
     }

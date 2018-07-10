@@ -241,4 +241,8 @@ public class Sisda {
     public String getLngPavement() {
         return lngPavement;
     }
+
+    public String getSynergiaStatus() {
+        return synergiaStatus;
+    }
 }

@@ -16,14 +16,15 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, EventRegisterFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,EventRegisterFragment.OnFragmentInteractionListener {
     private Session session;
     private ProgressDialog progress;
-    private String Name ="";
-    private String Email ="";
-    private TextView UserTest,EmailTest;
-   /* private TextView textName,textEmail; //HOLA
-    private String name,surname,email; //hola*/
+    private String name ="", role ="";
+    private String email ="";
+    private TextView userTest, emailTest;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,25 +32,31 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         session = new Session(this);
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        Name = Preferences.ObtenerPreferenceStringName(this,Preferences.UsuarioLogin);
-        Email = Preferences.ObtenerPreferenceStringEmail(this,Preferences.UsuarioLoginEmail);
+        name = Preferences.obtenerPreferenceStringName(this,Preferences.usuarioLogin);
+        email = Preferences.obtenerPreferenceStringEmail(this,Preferences.usuarioLoginEmail);
+        role = Preferences.obtenerPreferenceStringRol(this,Preferences.usuarioRol);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-       /* textName= findViewById(R.id.NameHeader);
-        textEmail= findViewById(R.id.EmailHeader);
-        Intent login = getIntent();
-        Bundle miBundle = login.getExtras();
-        name= miBundle.getString("UserName");
-        surname= miBundle.getString("Surname");
-        email= miBundle.getString("Email");
-        textName.setText(name+" "+surname);
-        textEmail.setText(email);*/
+
+        if (role.equals("Gerente")){
+            navigationView.getMenu().setGroupVisible(R.id.contractor,false);
+            navigationView.getMenu().setGroupVisible(R.id.inspector,false);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+        }else if (role.equals("Contratista")){
+            navigationView.getMenu().setGroupVisible(R.id.management,false);
+            navigationView.getMenu().setGroupVisible(R.id.inspector,false);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new EventRegisterFragment()).commit();
+        }else if (role.equals("Inspector")){
+            navigationView.getMenu().setGroupVisible(R.id.contractor,false);
+            navigationView.getMenu().setGroupVisible(R.id.management,false);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new DailyEventFragment()).commit();
+        }
 
 
 
@@ -69,10 +76,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        UserTest = findViewById(R.id.name_header);
-        EmailTest = findViewById(R.id.email_header);
-        UserTest.setText(Name);
-        EmailTest.setText(Email);
+        userTest = findViewById(R.id.name_header);
+        emailTest = findViewById(R.id.email_header);
+        userTest.setText(name);
+        emailTest.setText(email);
         return true;
     }
 
@@ -97,28 +104,30 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         //DailyEventFragment fragmento = null;
 
+
         int id = item.getItemId();
+
         if (id == R.id.home) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
 
-        } else if (id == R.id.nav_camera) {
+        } else if (id == R.id.daily_ev || id == R.id.daily_ev_i) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new DailyEventFragment()).commit();
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.historic_ev || id == R.id.historic_ev_i) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HistoricEventFragment()).commit();
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.map_ev || id == R.id.map_ev_c || id == R.id.map_ev_i) {
             Intent intent = new Intent(this,Eventsmap.class);
             startActivity(intent);
-        } else if (id == R.id.test) {
+        } else if (id == R.id.register_ev_c || id == R.id.register_ev_i) {
             //Intent intent = new Intent(this,EventRegistration.class);
-           //startActivity(intent);
+            //startActivity(intent);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new EventRegisterFragment()).commit();
 
 
-        } else if (id == R.id.nav_share) {
+        //} else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
             progress = new ProgressDialog(this);
             progress.setMessage("Cerrando sesión...");
             progress.show();
