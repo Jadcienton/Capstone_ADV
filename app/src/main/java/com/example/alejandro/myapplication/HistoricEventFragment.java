@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,6 +34,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
+
+import static com.android.volley.VolleyLog.TAG;
 
 
 /**
@@ -104,6 +108,26 @@ public class HistoricEventFragment extends Fragment  {
         pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
         //RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList); //view
         //recyclerViewSisda.setAdapter(adapter);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList, "detail");
+        Log.d(TAG, "hola");
+        recyclerViewSisda.setAdapter(adapter);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },500);
+                pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
+                recyclerViewSisda.setAdapter(adapter);
+            }
+        });
+
         return view;
     }
 
@@ -167,23 +191,7 @@ public class HistoricEventFragment extends Fragment  {
                     JSONArray time = new JSONArray(jO.getString("time"));
                     String timestamp = time.getJSONObject(0).getString("now");
 
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = format.parse(timestamp);
-                    Calendar calendar = GregorianCalendar.getInstance();
-                    calendar.setTime(date);
-/*
-                    Calendar inicio = GregorianCalendar.getInstance();
-                    inicio.set(2018,7,2,19,40,0);
-                    Calendar fin = GregorianCalendar.getInstance();
-                    fin.setTime(date);
-
-                        long end = inicio.getTimeInMillis();
-                        long start = fin.getTimeInMillis();
-
-
-*/
-
-
+                    eventList.clear();
                     jsArray = new JSONArray(jO.getString("data"));
                     for (int i =0 ; i< jsArray.length() ; i++) {
                         jsObject = jsArray.getJSONObject(i);
@@ -237,143 +245,254 @@ public class HistoricEventFragment extends Fragment  {
                         String qLatP = jsObject.getString("lat_pavement_event");
                         String qLngP = jsObject.getString("lng_pavement_event");
                         String qSS = jsObject.getString("synergia_status_event");
+                        String qPR = jsObject.getString("pavement_required_event");
 
-
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date date = format.parse(timestamp);
+                        Calendar calendar = GregorianCalendar.getInstance();
+                        calendar.setTime(date);
                         Calendar now = GregorianCalendar.getInstance();
                         now.setTime(date);
 
+
                         Date date2 = format.parse(qCDE);
                         Calendar creationTimeCal = GregorianCalendar.getInstance();
-                        creationTimeCal.setTime(date2);
-                        // TODO change qCDE to qADE
-                        Date date3 = format.parse(qCDE); //qADE
+
                         Calendar arrivalTimeCal = GregorianCalendar.getInstance();
-                        arrivalTimeCal.setTime(date3);
-                        //qHFD
-                        Date date4 = format.parse(qCDE); //qADE
                         Calendar hydraulicTimeCal = GregorianCalendar.getInstance();
-                        hydraulicTimeCal.setTime(date4);
+
+                        creationTimeCal.setTime(date2);
+                        if (qADE.equals("null")){
+                        }else {
+                            Date date3 = format.parse(qADE);
+                            arrivalTimeCal.setTime(date3);
+                        }
+                        if (qHFD.equals("null")){
+                        }else {
+                            Date date4 = format.parse(qHFD);
+                            hydraulicTimeCal.setTime(date4);
+                        }
 
                         long serverTime = now.getTimeInMillis();
-                        long creationTime = creationTimeCal.getTimeInMillis();
-                        long arrivalTime = arrivalTimeCal.getTimeInMillis();
-                        long hydraulicTime = hydraulicTimeCal.getTimeInMillis();
-                        //Log.d(TAG, "onResponse: time "+TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime)));
+                        long creationTimeLimit;
+                        long arrivalTimeLimit;
+                        long hydraulicTimeLimit;
                         String timeCalc="";
                         String delay = "";
-
 
                         if (qPE.equals("P1")){
                             switch (qSE.toLowerCase()){
                                 case "en camino":
-                                    if(TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - creationTime))<enCaminoVerde) {
-                                        if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime))>=60-enCaminoAmarillo){
-                                            timeCalc = "" + (60 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime))) + " min. restantes";
-                                            delay = "A Tiempo A"; //amarillo
-                                        }else if(TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime))<60-enCaminoAmarillo) {
-                                            timeCalc = "" + (60 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime))) + " min. restantes";
-                                            delay = "A Tiempo";
-                                        }
-                                    }else if(TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - creationTime))<2){
-                                        timeCalc = "" + (60 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - creationTime))) + " min.";
+                                    creationTimeCal.add(Calendar.HOUR,1);
+                                    creationTimeLimit = creationTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>2400){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " min. restantes";
+                                        delay = "A Tiempo";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=2400 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>0){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " min. restantes";
+                                        delay = "A Tiempo A"; //amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-3600){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " minutos";
                                         delay = "Retrasado";
-                                    }else if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - creationTime))>24) {
-                                        timeCalc = "" + (-TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - creationTime)))+" días";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-86400) {
+                                        if (TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " hora";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " horas";
                                         delay = "Retrasado";
-                                    } else {
-                                        timeCalc = "" + (1-TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - creationTime)))+" horas";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-86400){
+                                        if (TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime) + " día";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime) + " días";
                                         delay = "Retrasado";
                                     }
+
                                     break;
                                 case "ejecucion":
-                                    if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))<finHidraulicoP1){
-                                        if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))>=360-finHidraulicoAmarillo){
-                                            timeCalc = "" + (360 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))) + " min. restantes";
-                                            delay = "A Tiempo A"; //amarillo
-                                        }else if(TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))<360-finHidraulicoAmarillo) {
-                                            timeCalc = "" + (6 - TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))) + " horas restantes";
-                                            delay = "A Tiempo";
-                                        }
-                                    } else if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))<7){
-                                        timeCalc = "" + (360 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))) + " min.";
+                                    arrivalTimeCal.add(Calendar.HOUR,6);
+                                    arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>3600){
+                                        if (TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " hora restante";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " horas restantes";
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>0){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " min. restantes";
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-3600){
+                                        if (TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " minuto";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " minutos";
                                         delay = "Retrasado";
-                                    }else if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))>24){
-                                        timeCalc = "" + (-TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - arrivalTime)))+" días";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-86400) {
+                                        if (TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " hora";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " horas";
                                         delay = "Retrasado";
-                                    }else {
-                                        timeCalc = "" + (6-TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime)))+" horas";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-86400){
+                                        if (TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime) + " día";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime) + " días";
                                         delay = "Retrasado";
                                     }
                                     break;
                                 case "inspeccion":
-                                    if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))<finHidraulicoP1){
-                                        if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))>=360-finHidraulicoAmarillo){
-                                            timeCalc = "" + (360 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))) + " min. restantes";
-                                            delay = "A Tiempo A"; //amarillo
-                                        }else if(TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))<360-finHidraulicoAmarillo) {
-                                            timeCalc = "" + (6 - TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))) + " horas restantes";
-                                            delay = "A Tiempo";
-                                        }
-                                    } else if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))<7){
-                                        timeCalc = "" + (360 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - arrivalTime))) + " min.";
+                                    arrivalTimeCal.add(Calendar.HOUR,6);
+                                    arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>3600){
+                                        if (TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " hora restante";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " horas restantes";
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>0){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " min. restantes";
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-3600){
+                                        if (TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " minuto";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(arrivalTimeLimit - serverTime) + " minutos";
                                         delay = "Retrasado";
-                                    }else if (TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime))>24){
-                                        timeCalc = "" + (-TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - arrivalTime)))+" días";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-86400) {
+                                        if (TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " hora";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(arrivalTimeLimit - serverTime) + " horas";
                                         delay = "Retrasado";
-                                    }else {
-                                        timeCalc = "" + (6-TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - arrivalTime)))+" horas";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-86400){
+                                        if (TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime) + " día";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(arrivalTimeLimit - serverTime) + " días";
                                         delay = "Retrasado";
                                     }
                                     break;
-                                    //TODO arreglar pavimentacion
                                 case "pavimento":
-                                    if (TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))<pavimento) {//A Tiempo
-                                        Log.d(TAG, "onResponse: A tiempo " + TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                        if (TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime)) == pavimento - pavimentoAmarillo) {
-                                            Log.d(TAG, "onResponse: A tiempo Amarillo ==" + TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                            if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) > ((pavimento * 60 * 24) - (pavimentoAmarillo * 60))) {//1
-                                                Log.d(TAG, "onResponse: 1: " + TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                                timeCalc = "" + (8640 - TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime))) + " min. restantes";
-                                            } else if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) == ((pavimento * 60 * 24) - (pavimentoAmarillo * 60))){//2
-                                                Log.d(TAG, "onResponse: 2: " + TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                                timeCalc = "" + (144 - TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - hydraulicTime))) + " hora restante";
-                                            } else if (TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) == ((pavimento - pavimentoAmarillo) * 60 * 24)){//3
-                                                Log.d(TAG, "onResponse: 3: " + TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                                timeCalc = "" + (144 - TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))) + " día restante";
-                                            }else {//else
-                                                Log.d(TAG, "onResponse: else: " + TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime)) + " sisda: " + qS);
-                                                timeCalc = "" + (144 - TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - hydraulicTime))) + " horas restantes";
-                                            }
-                                            delay = "A Tiempo A"; //amarillo
-                                        }else if(TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))<(pavimento-pavimentoAmarillo)) {
-                                            Log.d(TAG, "onResponse: A tiempo elseif" + TimeUnit.MILLISECONDS.toMinutes(Math.abs(serverTime - hydraulicTime))+" sisda: "+qS);
-                                            timeCalc = "" + (6 - TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))) + " días restantes";
-                                            delay = "A Tiempo";
-                                        }
-
-
-
-                                    }else if (TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))>=pavimento){
-                                        Log.d(TAG, "onResponse: retra: "+TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))+" sisda: "+qS);
-                                        timeCalc = "" + (-TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime)))+" días";
+                                    hydraulicTimeCal.add(Calendar.DAY_OF_MONTH,6);
+                                    hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>86400){
+                                        if (TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " día restante";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " días restantes";
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=86400 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>3600){
+                                        if (TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " hora restante";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " horas restantes";
+                                        delay = "A Tiempo A";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>0){
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " min. restantes";
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-3600){
+                                        if (TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " minuto";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " minutos";
                                         delay = "Retrasado";
-                                    }else {
-                                        Log.d(TAG, "onResponse: retrasado: "+TimeUnit.MILLISECONDS.toDays(Math.abs(serverTime - hydraulicTime))+" sisda: "+qS);
-                                        timeCalc = "" + (6-TimeUnit.MILLISECONDS.toHours(Math.abs(serverTime - hydraulicTime)))+" horas";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-86400) {
+                                        if (TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " hora";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " horas";
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-86400){
+                                        if (TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime)==1)
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " día";
+                                        else
+                                            timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " días";
                                         delay = "Retrasado";
                                     }
                                     break;
                             }
-                        } else if(qPE.equals("P2")){
-
+                        }else if(qPE.equals("P2")){
+                            if (qSE.equalsIgnoreCase("en camino") || qSE.equalsIgnoreCase("inspeccion") || qSE.equalsIgnoreCase("ejecucion")){
+                                creationTimeCal.add(Calendar.HOUR,12);
+                                creationTimeLimit = creationTimeCal.getTimeInMillis();
+                                if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>3600){
+                                    if (TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " hora restante";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " horas restantes";
+                                    delay = "A Tiempo";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>0){
+                                    timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " min. restantes";
+                                    delay = "A Tiempo A";//Amarillo
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-3600){
+                                    if (TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " minuto";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(creationTimeLimit - serverTime) + " minutos";
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-86400) {
+                                    if (TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " hora";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(creationTimeLimit - serverTime) + " horas";
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-86400){
+                                    if (TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime) + " día";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(creationTimeLimit - serverTime) + " días";
+                                    delay = "Retrasado";
+                                }
+                            }else if (qSE.equalsIgnoreCase("pavimento")){
+                                Log.d(TAG, "onResponse: pavimento");
+                                hydraulicTimeCal.add(Calendar.DAY_OF_MONTH,6);
+                                hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                                if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>86400){
+                                    if (TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " día restante";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " días restantes";
+                                    delay = "A Tiempo";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=86400 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>3600){
+                                    if (TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " hora restante";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " horas restantes";
+                                    delay = "A Tiempo A";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>0){
+                                    timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " min. restantes";
+                                    delay = "A Tiempo A";//Amarillo
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-3600){
+                                    if (TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " minuto";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toMinutes(hydraulicTimeLimit - serverTime) + " minutos";
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-86400) {
+                                    if (TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " hora";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toHours(hydraulicTimeLimit - serverTime) + " horas";
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-86400){
+                                    if (TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime)==1)
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " día";
+                                    else
+                                        timeCalc = "" + TimeUnit.MILLISECONDS.toDays(hydraulicTimeLimit - serverTime) + " días";
+                                    delay = "Retrasado";
+                                }
+                            }
                         }
+
+
 
 
                         eventList.add(new Sisda(qS,qPE, convertUpper(qLE), convertUpper(qOE), convertUpper(qFE), convertUpper(qSE), convertUpper(qAC),qNC ,qDN, convertUpper(qCC),
                                 convertUpper(qCCu), convertUpper(qRC),qLatC,qLonC,qPDC,qPMC,qSDC,qSMC,qWMQC, convertUpper(qSCC), convertUpper(qACu),qCCus, convertUpper(qNP),qFPNP,
                                 qSPNP,EventDetail.dateConvert(qCDE),qADE,qBJD,qHFD,qDDE,qPDE, convertUpper(qNA) + " "+ convertUpper(qFSA), convertUpper(qNB) + " "+  convertUpper(qFSB),
                                 convertUpper(qNH) +  " "+ convertUpper(qFSH), convertUpper(qND) + " "+  convertUpper(qFSD),
-                                convertUpper(qNPa) + " "+  convertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,qSS));
+                                convertUpper(qNPa) + " "+  convertUpper(qFSP),delay,timeCalc, qLatA, qLngA,qLatB,qLngB,qLatH,qLngH,qLatP,qLngP,qSS,qPR));
                     }
                     RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
                     recyclerViewSisda.setAdapter(adapter);

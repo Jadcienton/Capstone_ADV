@@ -45,4 +45,5 @@
     <string name="cliente_social">Cliente Social:</string>
     <string name="actividad_econ_mica">Actividad Económica:</string>
     <string name="localidad">Localidad:</string>
+    <string name="title_activity_prueba_foto">PruebaFoto</string>
 </resources>

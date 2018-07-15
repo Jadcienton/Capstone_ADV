@@ -1,6 +1,6 @@
 package com.example.alejandro.myapplication;
 
-import android.app.ProgressDialog;
+
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -103,7 +103,23 @@ public class EventDetail extends AppCompatActivity {
         Bundle mibundle = this.getIntent().getExtras();
         String sisda = mibundle.getString("detailSisda");
         sisdaData = gson.fromJson(sisda,Sisda.class);
-
+        if (sisdaData.getPriority().equals("P1")){
+            if (!sisdaData.getDateHydraulic().equals("null")){
+                remainingDetail.setText("PAVIMENTACIÓN");
+            } else if (!sisdaData.getDateArrival().equals("null")){
+                remainingDetail.setText("FIN. HIDRÁULICA");
+            }else {
+                remainingDetail.setText("LLEGADA A TERRENO");
+            }
+        }else if (sisdaData.getPriority().equals("P2")){
+            if (!sisdaData.getDateHydraulic().equals("null")){
+                remainingDetail.setText("PAVIMENTACIÓN");
+            } else{
+                remainingDetail.setText("FIN. HIDRÁULICA");
+            }
+        }
+        if (sisdaData.getStatus().equalsIgnoreCase("finalizado"))
+            delayDetail.setVisibility(View.GONE);
 
         codeSisda.setText(sisdaData.getSisda());
         dateCreation.setText(sisdaData.getDateCreation());//sisdaData.getDateCreation
@@ -170,10 +186,6 @@ public class EventDetail extends AppCompatActivity {
             textTime+="0"+sec;
         else
             textTime+=sec;
-
-
-
-
         timeRemaining.setText(textTime);
     }
 
@@ -207,6 +219,9 @@ public class EventDetail extends AppCompatActivity {
         else if (Value.equals("null"))
         {
             Value = Value.replace("null", "-");
+        }else if (Value.equals("Null Null"))
+        {
+            Value = Value.replace("Null Null", "-");
         }
         return Value;
     }
@@ -221,6 +236,7 @@ public class EventDetail extends AppCompatActivity {
                     JSONObject jsObject = jsArray.getJSONObject(0);
                     String time = jsObject.getString("now");
                     Log.d(TAG, "onResponse: now: "+time);
+                    Log.d(TAG, "onResponse: delay: "+sisdaData.getDelay());
                     DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date date = format.parse(time);
                     Calendar now = GregorianCalendar.getInstance();
@@ -237,14 +253,15 @@ public class EventDetail extends AppCompatActivity {
                     if (sisdaData.getDateArrival().equals("null")){
                         Log.d(TAG, "onResponse: Arrival Nulo");
                     }else {
-                        Date date3 = format2.parse(sisdaData.getDateArrival()); //qADE
+                        Date date3 = format.parse(sisdaData.getDateArrival()); //qADE
                         arrivalTimeCal.setTime(date3);
                     }
                     //qHFD
                     if (sisdaData.getDateHydraulic().equals("null")){
                         Log.d(TAG, "onResponse: Hydraulic Nulo");
                     }else {
-                        Date date4 = format2.parse(sisdaData.getDateHydraulic()); //qADE
+                        Date date4 = format.parse(sisdaData.getDateHydraulic()); //qADE
+                        Log.d(TAG, "onResponse: hyd date: "+sisdaData.getDateHydraulic());
                         hydraulicTimeCal.setTime(date4);
                     }
 
@@ -261,52 +278,94 @@ public class EventDetail extends AppCompatActivity {
                         delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
                     }
 
-                    if (sisdaData.getStatus().toLowerCase().equals("en camino")){
-                        creationTimeCal.add(Calendar.HOUR,1);
-                        creationTimeLimit = creationTimeCal.getTimeInMillis();
-                        if (creationTimeLimit - serverTime > 0) {
-                            timeLeftInMilliseconds = creationTimeLimit - serverTime;
-                            countDown();
-                        }else{
-                            timeLeftInMilliseconds = serverTime - creationTimeLimit;
-                            delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
-                            chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
-                            chrono.setVisibility(View.VISIBLE);
-                            timeRemaining.setVisibility(View.GONE);
-                            chrono.setFormat("-%s");
-                            chrono.start();
-                        }
-                    }else if (sisdaData.getStatus().toLowerCase().equals("ejecución")||sisdaData.getStatus().toLowerCase().equals("inspección")){
-                        arrivalTimeCal.add(Calendar.HOUR,6);
-                        arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
-                        if (arrivalTimeLimit - serverTime > 0) {
-                            timeLeftInMilliseconds = arrivalTimeLimit - serverTime;
-                            countDown();
-                        }else{
-                            timeLeftInMilliseconds = serverTime - arrivalTimeLimit;
-                            delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
-                            chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
-                            chrono.setVisibility(View.VISIBLE);
-                            timeRemaining.setVisibility(View.GONE);
-                            chrono.setFormat("-%s");
-                            chrono.start();
-                        }
-                    }else if (sisdaData.getStatus().toLowerCase().equals("pavimento")){
-                        hydraulicTimeCal.add(Calendar.DAY_OF_MONTH,6);
-                        hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
-                        if (hydraulicTimeLimit - serverTime > 0) {
-                            timeLeftInMilliseconds = hydraulicTimeLimit - serverTime;
-                            countDown();
-                        }else{
-                            timeLeftInMilliseconds = serverTime - hydraulicTimeLimit;
-                            delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
-                            chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
-                            chrono.setVisibility(View.VISIBLE);
-                            timeRemaining.setVisibility(View.GONE);
-                            chrono.setFormat("-%s");
-                            chrono.start();
-                        }
-                    }
+                   if (sisdaData.getPriority().equals("P1")){
+                       if (sisdaData.getStatus().toLowerCase().equals("en camino")){
+                           creationTimeCal.add(Calendar.HOUR,1);
+                           creationTimeLimit = creationTimeCal.getTimeInMillis();
+                           if (creationTimeLimit - serverTime > 0) {
+                               timeLeftInMilliseconds = creationTimeLimit - serverTime;
+                               countDown();
+                           }else{
+                               timeLeftInMilliseconds = serverTime - creationTimeLimit;
+                               delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
+                               chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
+                               chrono.setVisibility(View.VISIBLE);
+                               timeRemaining.setVisibility(View.GONE);
+                               chrono.setFormat("-%s");
+                               chrono.start();
+                           }
+                       }else if (sisdaData.getStatus().toLowerCase().equals("ejecución")||sisdaData.getStatus().toLowerCase().equals("inspección")){
+                           arrivalTimeCal.add(Calendar.HOUR,6);
+                           arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
+                           if (arrivalTimeLimit - serverTime > 0) {
+                               timeLeftInMilliseconds = arrivalTimeLimit - serverTime;
+                               countDown();
+                           }else{
+                               timeLeftInMilliseconds = serverTime - arrivalTimeLimit;
+                               delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
+                               chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
+                               chrono.setVisibility(View.VISIBLE);
+                               timeRemaining.setVisibility(View.GONE);
+                               chrono.setFormat("-%s");
+                               chrono.start();
+                           }
+                       }else if (sisdaData.getStatus().toLowerCase().equals("pavimento")){
+                           Log.d(TAG, "onResponse: if pavimento "+hydraulicTimeCal);
+                           hydraulicTimeCal.add(Calendar.HOUR,144);
+                           Log.d(TAG, "onResponse: add "+hydraulicTimeCal);
+                           hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                           if (hydraulicTimeLimit - serverTime > 0) {
+                               Log.d(TAG, "onResponse: if >0");
+                               timeLeftInMilliseconds = hydraulicTimeLimit - serverTime;
+                               countDown();
+                           }else{
+                               Log.d(TAG, "onResponse: else "+hydraulicTimeLimit+" server "+serverTime);
+                               timeLeftInMilliseconds = serverTime - hydraulicTimeLimit;
+                               delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
+                               chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
+                               chrono.setVisibility(View.VISIBLE);
+                               timeRemaining.setVisibility(View.GONE);
+                               chrono.setFormat("-%s");
+                               chrono.start();
+                           }
+                       }
+                   }else if (sisdaData.getPriority().equals("P2")){
+                       if (sisdaData.getStatus().toLowerCase().equals("ejecución")|| sisdaData.getStatus().toLowerCase().equals("inspección") || sisdaData.getStatus().toLowerCase().equals("en camino")){
+                           creationTimeCal.add(Calendar.HOUR,12);
+                           creationTimeLimit = creationTimeCal.getTimeInMillis();
+                           if (creationTimeLimit - serverTime > 0) {
+                               timeLeftInMilliseconds = creationTimeLimit - serverTime;
+                               countDown();
+                           }else{
+                               timeLeftInMilliseconds = serverTime - creationTimeLimit;
+                               delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
+                               chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
+                               chrono.setVisibility(View.VISIBLE);
+                               timeRemaining.setVisibility(View.GONE);
+                               chrono.setFormat("-%s");
+                               chrono.start();
+                           }
+                       }else if (sisdaData.getStatus().toLowerCase().equals("pavimento")){
+                           Log.d(TAG, "onResponse: if pavimento "+hydraulicTimeCal);
+                           hydraulicTimeCal.add(Calendar.HOUR,144);
+                           Log.d(TAG, "onResponse: add "+hydraulicTimeCal);
+                           hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                           if (hydraulicTimeLimit - serverTime > 0) {
+                               Log.d(TAG, "onResponse: if >0");
+                               timeLeftInMilliseconds = hydraulicTimeLimit - serverTime;
+                               countDown();
+                           }else{
+                               Log.d(TAG, "onResponse: else "+hydraulicTimeLimit+" server "+serverTime);
+                               timeLeftInMilliseconds = serverTime - hydraulicTimeLimit;
+                               delayDetail.setBackgroundColor(getResources().getColor(R.color.progress_warning));
+                               chrono.setBase(SystemClock.elapsedRealtime()-timeLeftInMilliseconds);
+                               chrono.setVisibility(View.VISIBLE);
+                               timeRemaining.setVisibility(View.GONE);
+                               chrono.setFormat("-%s");
+                               chrono.start();
+                           }
+                       }
+                   }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (ParseException e) {
