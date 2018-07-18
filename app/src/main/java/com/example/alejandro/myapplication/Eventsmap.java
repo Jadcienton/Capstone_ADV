@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,10 +16,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
 import android.util.Log;
+import android.widget.Toast;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,14 +34,13 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     public JSONArray addresses = new JSONArray();
     public ArrayList<LatLng> markers = new ArrayList<>();
+    JSONArray jsArray;
+    JSONObject jsObject;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eventsmap);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -54,18 +58,53 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        sisdaQuery("http://192.168.15.35/adv/EventosDiarios.php");
-        Log.d(TAG, "onMapReady: "+ markers.size());
+        String url =  "http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos";
+        RequestQueue queue = Volley.newRequestQueue(this);
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        LatLng adv = new LatLng(-29.928119,-71.242348);
-        mMap.addMarker(new MarkerOptions().position(new LatLng(-29.9430602,-71.2565423)).title("SISDA: 1254862 P1 ").snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(-29.9165558,-71.2577062)).title("SISDA: 1254863 P2 ").snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(-71.2577062,-71.2956232)).title("SISDA: 1254836 P1 ").snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
-        mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jO = new JSONObject(response);
+                    jsArray = new JSONArray(jO.getString("data"));
+                    Log.d(TAG, "onMapReady: " + markers.size());
+                    Log.d(TAG, "onMapReady: " + markers.size());mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    LatLng adv = new LatLng(-29.928119, -71.242348);
+                    mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    for (int i =0 ; i< jsArray.length() ; i++) {
+                        jsObject = jsArray.getJSONObject(i);
+                        String qLatC = jsObject.getString("latitude_event");
+                        String qLonC = jsObject.getString("longitude_event");
+                        String qSE = jsObject.getString("status_event");
+                        String qS = jsObject.getString("sisda_event");
+                        if(!qLatC.equalsIgnoreCase(null) && !qLonC.equalsIgnoreCase(null)) {
+                            double lngP = Double.valueOf(qLatC);
+                            double latP = Double.valueOf(qLonC);
+                            if (qSE.equalsIgnoreCase("EN CAMINO")) {
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+                            }
+                            if (qSE.equalsIgnoreCase("EJECUCION")) {
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+                            }
+                            if (qSE.equalsIgnoreCase("INSPECCION")) {
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
+                            }
+                        }
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv, 12));
+                }catch (JSONException e)
+                {
+                    Toast.makeText(Eventsmap.this, "Catch", Toast.LENGTH_SHORT).show();
 
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
+            }
+        });
+        queue.add(stringRequest);
     }
     private Bitmap getBitmap(int drawableRes) {
         Drawable drawable = getResources().getDrawable(drawableRes);

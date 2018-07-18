@@ -63,7 +63,9 @@
         <activity
             android:name=".EventRegistration"
             android:screenOrientation="portrait" />
-        <activity android:name=".PruebaFoto"></activity>
+        <activity android:name=".PruebaFoto" />
+        <activity android:name=".Comments" />
+        <activity android:name=".AddComment"></activity>
     </application>
 
 </manifest><!--

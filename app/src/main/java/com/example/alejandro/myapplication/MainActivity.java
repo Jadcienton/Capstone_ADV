@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HistoricEventFragment()).commit();
 
         } else if (id == R.id.map_ev || id == R.id.map_ev_c || id == R.id.map_ev_i) {
-            Intent intent = new Intent(this,Eventsmap.class);
+            Intent intent = new Intent(this,Comments.class);
             startActivity(intent);
         } else if (id == R.id.register_ev_c || id == R.id.register_ev_i) {
             //Intent intent = new Intent(this,EventRegistration.class);

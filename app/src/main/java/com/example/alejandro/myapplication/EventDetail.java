@@ -1,6 +1,7 @@
 package com.example.alejandro.myapplication;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -157,7 +158,9 @@ public class EventDetail extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(mainlayout, "Comentario", Snackbar.LENGTH_LONG).show();
+                Intent intent = new Intent(EventDetail.this,Comments.class);
+                intent.putExtra("sisda",sisdaData.getSisda());
+                startActivity(intent);
             }
         });
 
@@ -199,7 +202,7 @@ public class EventDetail extends AppCompatActivity {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 SimpleDateFormat formatterOut = new SimpleDateFormat("dd-MM-yyyy HH:mm");
                 Date date = format.parse(Fecha);
-                realDate = formatterOut.format(date).toString();
+                realDate = formatterOut.format(date);
             } catch (java.text.ParseException e) {
                 e.printStackTrace();
 
