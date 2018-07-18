@@ -143,6 +143,15 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
+        recyclerViewSisda.setAdapter(adapter);
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

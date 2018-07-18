@@ -9,18 +9,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -63,7 +60,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 
 public class EventRegistration extends Activity implements OnMapReadyCallback{
@@ -363,8 +359,8 @@ public class EventRegistration extends Activity implements OnMapReadyCallback{
                 {
                     longitudeGPS= location.getLongitude();
                     latitudeGPS = location.getLatitude();
-                    String Name = Preferences.obtenerPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
-                    String Rut = Preferences.obtenerPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
+                    String Name = Preferences.getPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
+                    String Rut = Preferences.getPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
                     updateStatusEvent(String.valueOf(latitudeGPS),String.valueOf(longitudeGPS),Rut,Name);
 
                 }
@@ -380,8 +376,8 @@ public class EventRegistration extends Activity implements OnMapReadyCallback{
                 if (location != null) {
                     longitudeGPS = location.getLongitude();
                     latitudeGPS = location.getLatitude();
-                    String Name = Preferences.obtenerPreferenceStringName(EventRegistration.this, Preferences.usuarioLogin);
-                    String Rut = Preferences.obtenerPreferenceStringRut(EventRegistration.this, Preferences.usuarioRut);
+                    String Name = Preferences.getPreferenceStringName(EventRegistration.this, Preferences.usuarioLogin);
+                    String Rut = Preferences.getPreferenceStringRut(EventRegistration.this, Preferences.usuarioRut);
                     if (picBeginning.getDrawable() != null) {
                         updateStatusEvent(String.valueOf(latitudeGPS), String.valueOf(longitudeGPS), Rut, Name);
                     }else{
@@ -400,8 +396,8 @@ public class EventRegistration extends Activity implements OnMapReadyCallback{
                 {
                     longitudeGPS= location.getLongitude();
                     latitudeGPS = location.getLatitude();
-                    String Name = Preferences.obtenerPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
-                    String Rut = Preferences.obtenerPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
+                    String Name = Preferences.getPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
+                    String Rut = Preferences.getPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
                     if(picHydraulic.getDrawable() != null) {
                         updateStatusEvent(String.valueOf(latitudeGPS), String.valueOf(longitudeGPS), Rut, Name);
                     }else{
@@ -437,8 +433,8 @@ public class EventRegistration extends Activity implements OnMapReadyCallback{
                 {
                     longitudeGPS= location.getLongitude();
                     latitudeGPS = location.getLatitude();
-                    String Name = Preferences.obtenerPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
-                    String Rut = Preferences.obtenerPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
+                    String Name = Preferences.getPreferenceStringName(EventRegistration.this,Preferences.usuarioLogin);
+                    String Rut = Preferences.getPreferenceStringRut(EventRegistration.this,Preferences.usuarioRut);
                     if(picPavement.getDrawable() != null) {
                         updateStatusEvent(String.valueOf(latitudeGPS), String.valueOf(longitudeGPS), Rut, Name);
                     }else{

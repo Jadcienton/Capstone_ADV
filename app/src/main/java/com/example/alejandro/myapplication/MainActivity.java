@@ -2,6 +2,7 @@ package com.example.alejandro.myapplication;
 
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.ReportFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,9 +39,9 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        name = Preferences.obtenerPreferenceStringName(this,Preferences.usuarioLogin);
-        email = Preferences.obtenerPreferenceStringEmail(this,Preferences.usuarioLoginEmail);
-        role = Preferences.obtenerPreferenceStringRol(this,Preferences.usuarioRol);
+        name = Preferences.getPreferenceStringName(this,Preferences.usuarioLogin);
+        email = Preferences.getPreferenceStringEmail(this,Preferences.usuarioLoginEmail);
+        role = Preferences.getPreferenceStringRol(this,Preferences.usuarioRol);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         userTest = findViewById(R.id.name_header);
         emailTest = findViewById(R.id.email_header);
         userTest.setText(name);
@@ -125,8 +126,8 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new EventRegisterFragment()).commit();
 
 
-        //} else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.report) {
+            //getFragmentManager().beginTransaction().replace(R.id.fragment_container,new ReportFragment()).commit();
         } else if (id == R.id.nav_logout) {
             progress = new ProgressDialog(this);
             progress.setMessage("Cerrando sesión...");

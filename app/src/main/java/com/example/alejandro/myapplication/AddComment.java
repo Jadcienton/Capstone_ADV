@@ -1,6 +1,5 @@
 package com.example.alejandro.myapplication;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,22 +19,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AddComment extends AppCompatActivity {
-    Button addButton;
-    Spinner type;
-    String typeSelected;
-    EditText comment;
+    private Button addButton;
+    private Spinner type;
+    private String typeSelected;
+    private EditText comment;
+    private String sisda,rutUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,17 +42,28 @@ public class AddComment extends AppCompatActivity {
         type.setAdapter(adapter);
         addButton = findViewById(R.id.add_button);
         comment = findViewById(R.id.editText);
-        type.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        rutUser = Preferences.getPreferenceStringRut(this,Preferences.usuarioRut);
+        Bundle myBundle = this.getIntent().getExtras();
+        sisda = myBundle.getString("sisda");
+        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 typeSelected = parent.getItemAtPosition(position).toString();
             }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertComment("http://"+getResources().getString(R.string.url_api)+"/adv/php/Post.php");
+                if (typeSelected.equalsIgnoreCase("Seleccionar tipo")) {
+                    Toast.makeText(AddComment.this, "Seleccionar tipo de comentario", Toast.LENGTH_SHORT).show();
+                }else {
+                    insertComment("http://" + getResources().getString(R.string.url_api) + "/adv/php/Post.php");
+                }
             }
         });
 
@@ -70,7 +75,12 @@ public class AddComment extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                Toast.makeText(AddComment.this, ""+response, Toast.LENGTH_SHORT).show();
+                if (response.trim().equalsIgnoreCase("true")){
+                    AddComment.this.finish();
+                }else {
+                    Toast.makeText(AddComment.this, "Fallo al agregar comentario. Volver a intentar", Toast.LENGTH_SHORT).show();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -85,13 +95,11 @@ public class AddComment extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 Map<String,String> parametros = new HashMap<>();
                 try {
-                    //TODO
                     parametros.put("comment_comments", comment.getText().toString());
-                    if (typeSelected.equalsIgnoreCase(""))
-                    parametros.put("type_comments", "");
-                    parametros.put("date_comments", "");
-                    parametros.put("fk_login_comments", "");
-                    parametros.put("fk_event_comments", "");
+                    parametros.put("type_comments", typeSelected);
+                    parametros.put("date_comments", "NOW()");
+                    parametros.put("fk_login_comments", rutUser);
+                    parametros.put("fk_event_comments", sisda);
                     JSONObject userJSON = new JSONObject(parametros);
                     params.put("id", "insertarComentario");
                     params.put("data", userJSON.toString());

@@ -10,10 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,11 +23,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,8 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
-
-import static com.android.volley.VolleyLog.TAG;
 
 
 /**
@@ -66,6 +64,7 @@ public class HistoricEventFragment extends Fragment  {
     RecyclerView recyclerViewSisda;
     ArrayList<Sisda> eventList;
 
+    private String filterSelected = "";
     public HistoricEventFragment() {
         // Required empty public constructor
     }
@@ -91,10 +90,49 @@ public class HistoricEventFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.target_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id= item.getItemId();
+        if(id == R.id.show_status) {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFstatus");
+            filterSelected= "show_status";
+            return false;
+        }
+        if(id == R.id.priority_one) {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPOne");
+            filterSelected= "priority_one";
+            return false;
+        }
+        if(id == R.id.priority_two)
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPTwo");
+            filterSelected= "priority_two";
+            return false;
+        }
+        if(id == R.id.date_up_down) {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosHistoricos");
+            filterSelected= "date_up_down";
+            return false;
+        }
+        if(id == R.id.date_down_up) {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosASC");
+            filterSelected= "date_down_up";
+            return false;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -123,12 +161,61 @@ public class HistoricEventFragment extends Fragment  {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 },500);
-                pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
-                recyclerViewSisda.setAdapter(adapter);
+                if(filterSelected.equalsIgnoreCase("show_status")) {
+                    pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosHistoricosFstatus");
+                    recyclerViewSisda.setAdapter(adapter);
+                } else if (filterSelected.equalsIgnoreCase("priority_one")) {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPOne");
+                    recyclerViewSisda.setAdapter(adapter);
+                } else if (filterSelected.equalsIgnoreCase("priority_two")) {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPTwo");
+                    recyclerViewSisda.setAdapter(adapter);
+                } else if (filterSelected.equalsIgnoreCase("date_up_down")) {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
+                    recyclerViewSisda.setAdapter(adapter);
+                } else if (filterSelected.equalsIgnoreCase("date_down_up")) {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosASC");
+                    recyclerViewSisda.setAdapter(adapter);
+                } else {
+                    pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosHistoricos");
+                    recyclerViewSisda.setAdapter(adapter);
+                }
             }
         });
-
         return view;
+    }
+
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
+        if(filterSelected.equalsIgnoreCase("show_status")) {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosHistoricosFstatus");
+            recyclerViewSisda.setAdapter(adapter);
+        }else if (filterSelected.equalsIgnoreCase("priority_one"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPOne");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else if (filterSelected.equalsIgnoreCase("priority_two"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosFPTwo");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else if (filterSelected.equalsIgnoreCase("date_up_down"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
+            recyclerViewSisda.setAdapter(adapter);
+        }else if (filterSelected.equalsIgnoreCase("date_down_up"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricosASC");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosHistoricos");
+            recyclerViewSisda.setAdapter(adapter);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -137,6 +224,7 @@ public class HistoricEventFragment extends Fragment  {
             mListener.onFragmentInteraction(uri);
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -514,7 +602,7 @@ public class HistoricEventFragment extends Fragment  {
     }
 
     private static String convertUpper(String word)
-            //TODO agregar En Camino, Pavimento
+    //TODO agregar En Camino, Pavimento
     {
         if (word.equals(""))
         {

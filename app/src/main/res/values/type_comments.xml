@@ -2,9 +2,9 @@
 <resources>
     <string-array name="type">
         <item>Seleccionar tipo</item>
-        <item>Tipo 1</item>
-        <item>Tipo 2</item>
-        <item>Tipo 3</item>
-        <item>Tipo 4</item>
+        <item>SISDA repetido</item>
+        <item>No hay gente en el domicilio</item>
+        <item>Programar corte</item>
+        <item>Otros</item>
     </string-array>
 </resources>

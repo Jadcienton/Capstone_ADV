@@ -5,12 +5,16 @@
     <string name="nav_header_title">Usuario Prueba</string>
     <string name="nav_header_subtitle">adv@aguasdelvalle.cl</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Mostrar estado</string>
+    <string name="action_settings2">Solo prioridad 1</string>
+    <string name="action_settings3">Solo prioridad 2</string>
+    <string name="action_settings4">Ordenar por fecha ▲</string>
+    <string name="action_settings5">Ordenar por fecha ▼</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">Iniciar Sesión</string>
-    <string name="url_api">192.168.43.7</string>
+    <string name="url_api">192.168.43.7</string>//192.168.43.7
 
     <!-- Strings related to login -->
     <string name="prompt_rut">RUT</string>
@@ -45,5 +49,5 @@
     <string name="cliente_social">Cliente Social:</string>
     <string name="actividad_econ_mica">Actividad Económica:</string>
     <string name="localidad">Localidad:</string>
-    <string name="title_activity_prueba_foto">PruebaFoto</string>
 </resources>
+

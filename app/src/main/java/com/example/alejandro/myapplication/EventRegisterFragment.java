@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -102,10 +104,35 @@ public class EventRegisterFragment extends Fragment {
         eventList = new ArrayList<>();
         recyclerViewSisda = view.findViewById(R.id.recyclerview);
         recyclerViewSisda.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos");
-        //RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList); //view
-        //recyclerViewSisda.setAdapter(adapter);
+        pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosRegistro");
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList, "register"); //view
+        recyclerViewSisda.setAdapter(adapter);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },500);
+                pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosRegistro");
+                recyclerViewSisda.setAdapter(adapter);
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosRegistro");
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "register"); //view
+        recyclerViewSisda.setAdapter(adapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -149,14 +176,6 @@ public class EventRegisterFragment extends Fragment {
     private void pushSisda(String URL){
         Log.d(TAG, "pushSisda: "+URL);
 
-        final int enCaminoVerde = 1; //horas
-        final int enCaminoAmarillo = 20; //minutos
-        final int finHidraulicoP1 = 6; //horas
-        final int finHidraulicoAmarillo = 60; //minutos
-        final int finHidraulicoP2 = 12; //horas
-        final int pavimento = 6; //dias
-        final int pavimentoAmarillo = 1; //dias
-
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
@@ -166,6 +185,7 @@ public class EventRegisterFragment extends Fragment {
                     JSONArray time = new JSONArray(jO.getString("time"));
                     String timestamp = time.getJSONObject(0).getString("now");
 
+                    eventList.clear();
                     jsArray = new JSONArray(jO.getString("data"));
                     for (int i =0 ; i< jsArray.length() ; i++) {
                         jsObject = jsArray.getJSONObject(i);

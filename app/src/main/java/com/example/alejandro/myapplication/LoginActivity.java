@@ -162,10 +162,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void RolManagement(String rol, String qName,String qEmail,String qRut,String qRol) {
-        Preferences.savePreferenceStringName(LoginActivity.this, qName, Preferences.usuarioLogin);
-        Preferences.savePreferenceStringEmail(LoginActivity.this, qEmail, Preferences.usuarioLoginEmail);
-        Preferences.savePreferenceStringRut(LoginActivity.this, qRut, Preferences.usuarioRut);
-        Preferences.savePreferenceStringRol(LoginActivity.this, qRol, Preferences.usuarioRol);
+        Preferences.setPreferenceStringName(LoginActivity.this, qName, Preferences.usuarioLogin);
+        Preferences.setPreferenceStringEmail(LoginActivity.this, qEmail, Preferences.usuarioLoginEmail);
+        Preferences.setPreferenceStringRut(LoginActivity.this, qRut, Preferences.usuarioRut);
+        Preferences.setPreferenceStringRol(LoginActivity.this, qRol, Preferences.usuarioRol);
 
         if (rol.equals("Gerente")) {
             Toast.makeText(getApplicationContext(), "Gerencia", Toast.LENGTH_SHORT).show();
