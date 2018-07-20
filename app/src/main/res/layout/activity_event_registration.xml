@@ -41,6 +41,7 @@
 
             <!-- Bloque Temporizador -->
             <RelativeLayout
+                android:id="@+id/layout_delay_registration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="16dp"
@@ -79,6 +80,16 @@
                     android:textColor="@android:color/white"
                     android:layout_below="@+id/text_remaining_reg"
                     android:gravity="center"/>
+
+                <Chronometer
+                    android:id="@+id/chrono_reg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:layout_below="@+id/text_remaining_detail"
+                    android:gravity="center"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 

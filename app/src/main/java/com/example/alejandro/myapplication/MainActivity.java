@@ -2,7 +2,6 @@ package com.example.alejandro.myapplication;
 
 
 import android.app.ProgressDialog;
-import android.arch.lifecycle.ReportFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,EventRegisterFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DailyEventFragment.OnFragmentInteractionListener, HistoricEventFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener,EventRegisterFragment.OnFragmentInteractionListener, ReportFragment.OnFragmentInteractionListener {
     private Session session;
     private ProgressDialog progress;
     private String name ="", role ="";
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().replace(R.id.fragment_container,new HistoricEventFragment()).commit();
 
         } else if (id == R.id.map_ev || id == R.id.map_ev_c || id == R.id.map_ev_i) {
-            Intent intent = new Intent(this,Comments.class);
+            Intent intent = new Intent(this,Eventsmap.class);
             startActivity(intent);
         } else if (id == R.id.register_ev_c || id == R.id.register_ev_i) {
             //Intent intent = new Intent(this,EventRegistration.class);
@@ -127,7 +126,7 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.report) {
-            //getFragmentManager().beginTransaction().replace(R.id.fragment_container,new ReportFragment()).commit();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container,new ReportFragment()).commit();
         } else if (id == R.id.nav_logout) {
             progress = new ProgressDialog(this);
             progress.setMessage("Cerrando sesión...");

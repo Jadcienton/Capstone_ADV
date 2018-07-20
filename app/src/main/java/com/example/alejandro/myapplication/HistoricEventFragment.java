@@ -602,7 +602,6 @@ public class HistoricEventFragment extends Fragment  {
     }
 
     private static String convertUpper(String word)
-    //TODO agregar En Camino, Pavimento
     {
         if (word.equals(""))
         {

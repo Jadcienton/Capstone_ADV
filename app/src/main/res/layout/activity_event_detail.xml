@@ -30,10 +30,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/map_detail"
+            <fragment
+                android:id="@+id/map_registration"
+                android:name="com.google.android.gms.maps.MapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"></com.google.android.gms.maps.MapView>
+                android:layout_height="250dp"
+                />
             <!-- Bloque Temporizador -->
             <RelativeLayout
                 android:id="@+id/layout_delay_detail"

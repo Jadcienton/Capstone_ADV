@@ -27,7 +27,15 @@ import android.widget.Toast;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
     private static final String TAG = "EventMap";
@@ -58,7 +66,7 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        String url =  "http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosHistoricos";
+        String url =  "http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosMapa";
         RequestQueue queue = Volley.newRequestQueue(this);
         mMap = googleMap;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -66,6 +74,8 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
             public void onResponse(String response) {
                 try {
                     JSONObject jO = new JSONObject(response);
+                    JSONArray time = new JSONArray(jO.getString("time"));
+                    String timestamp = time.getJSONObject(0).getString("now");
                     jsArray = new JSONArray(jO.getString("data"));
                     Log.d(TAG, "onMapReady: " + markers.size());
                     Log.d(TAG, "onMapReady: " + markers.size());mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -73,29 +83,184 @@ public class Eventsmap extends FragmentActivity implements OnMapReadyCallback{
                     mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                     for (int i =0 ; i< jsArray.length() ; i++) {
                         jsObject = jsArray.getJSONObject(i);
-                        String qLatC = jsObject.getString("latitude_event");
-                        String qLonC = jsObject.getString("longitude_event");
+                        double qLatC = jsObject.getDouble("latitude_customer");
+                        double qLonC = jsObject.getDouble("longitude_customer");
                         String qSE = jsObject.getString("status_event");
                         String qS = jsObject.getString("sisda_event");
-                        if(!qLatC.equalsIgnoreCase(null) && !qLonC.equalsIgnoreCase(null)) {
-                            double lngP = Double.valueOf(qLatC);
-                            double latP = Double.valueOf(qLonC);
-                            if (qSE.equalsIgnoreCase("EN CAMINO")) {
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+                        String qCDE = jsObject.getString("creation_date_event");
+                        String qADE = jsObject.getString("arrival_date_event");
+                        String qHFD = jsObject.getString("hydraulic_finish_date_event");
+
+                        String qPE = "P"+jsObject.getString("priority_event");
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date date = format.parse(timestamp);
+                        Calendar calendar = GregorianCalendar.getInstance();
+                        calendar.setTime(date);
+                        Calendar now = GregorianCalendar.getInstance();
+                        now.setTime(date);
+
+
+                        Date date2 = format.parse(qCDE);
+                        Calendar creationTimeCal = GregorianCalendar.getInstance();
+
+                        Calendar arrivalTimeCal = GregorianCalendar.getInstance();
+                        Calendar hydraulicTimeCal = GregorianCalendar.getInstance();
+
+                        creationTimeCal.setTime(date2);
+                        if (qADE.equals("null")){
+                        }else {
+                            Date date3 = format.parse(qADE);
+                            arrivalTimeCal.setTime(date3);
+                        }
+                        if (qHFD.equals("null")){
+                        }else {
+                            Date date4 = format.parse(qHFD);
+                            hydraulicTimeCal.setTime(date4);
+                        }
+
+                        long serverTime = now.getTimeInMillis();
+                        long creationTimeLimit;
+                        long arrivalTimeLimit;
+                        long hydraulicTimeLimit;
+                        String delay = "";
+
+                        if (qPE.equals("P1")){
+                            switch (qSE.toLowerCase()){
+                                case "en camino":
+                                    creationTimeCal.add(Calendar.HOUR,1);
+                                    creationTimeLimit = creationTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>2400){
+                                        delay = "A Tiempo";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=2400 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>0){
+                                        delay = "A Tiempo A"; //amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-3600){
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-86400) {
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-86400){
+                                        delay = "Retrasado";
+                                    }
+
+                                    break;
+                                case "ejecucion":
+                                    arrivalTimeCal.add(Calendar.HOUR,6);
+                                    arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>3600){
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>0){
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-3600){
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-86400) {
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-86400){
+                                        delay = "Retrasado";
+                                    }
+                                    break;
+                                case "inspeccion":
+                                    arrivalTimeCal.add(Calendar.HOUR,6);
+                                    arrivalTimeLimit = arrivalTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>3600){
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>0){
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-3600){
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)>-86400) {
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(arrivalTimeLimit - serverTime)<=-86400){
+                                        delay = "Retrasado";
+                                    }
+                                    break;
+                                case "pavimento":
+                                    hydraulicTimeCal.add(Calendar.DAY_OF_MONTH,6);
+                                    hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                                    if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>86400){
+                                        delay = "A Tiempo";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=86400 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>3600){
+                                        delay = "A Tiempo A";
+                                    } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>0){
+                                        delay = "A Tiempo A";//Amarillo
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-3600){
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-86400) {
+                                        delay = "Retrasado";
+                                    }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-86400){
+                                        delay = "Retrasado";
+                                    }
+                                    break;
                             }
-                            if (qSE.equalsIgnoreCase("EJECUCION")) {
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
-                            }
-                            if (qSE.equalsIgnoreCase("INSPECCION")) {
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(latP,lngP)).title("SISDA: " + qS).snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
+                        }else if(qPE.equals("P2")){
+                            if (qSE.equalsIgnoreCase("en camino") || qSE.equalsIgnoreCase("inspeccion") || qSE.equalsIgnoreCase("ejecucion")){
+                                creationTimeCal.add(Calendar.HOUR,12);
+                                creationTimeLimit = creationTimeCal.getTimeInMillis();
+                                if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>3600){
+                                    delay = "A Tiempo";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>0){
+                                    delay = "A Tiempo A";//Amarillo
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-3600){
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)>-86400) {
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(creationTimeLimit - serverTime)<=-86400){
+                                    delay = "Retrasado";
+                                }
+                            }else if (qSE.equalsIgnoreCase("pavimento")){
+                                Log.d(TAG, "onResponse: pavimento");
+                                hydraulicTimeCal.add(Calendar.DAY_OF_MONTH,6);
+                                hydraulicTimeLimit = hydraulicTimeCal.getTimeInMillis();
+                                if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>86400){
+                                    delay = "A Tiempo";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=86400 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>3600){
+                                    delay = "A Tiempo A";
+                                } else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>0){
+                                    delay = "A Tiempo A";//Amarillo
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=0 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-3600){
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-3600 && TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)>-86400) {
+                                    delay = "Retrasado";
+                                }else if (TimeUnit.MILLISECONDS.toSeconds(hydraulicTimeLimit - serverTime)<=-86400){
+                                    delay = "Retrasado";
+                                }
                             }
                         }
+                        Log.d(TAG, "onResponse: "+qLatC+" "+qLonC);
+
+                            if (qSE.equalsIgnoreCase("EN CAMINO")) {
+                                if (delay.equalsIgnoreCase("a tiempo")) {
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC, qLonC)).title("SISDA: " + qS).snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo))));
+                                }else if (delay.equalsIgnoreCase("a tiempo a")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC, qLonC)).title("SISDA: " + qS).snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_a_tiempo_amarillo))));
+                                }else if (delay.equalsIgnoreCase("retrasado")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC, qLonC)).title("SISDA: " + qS).snippet("En Camino").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_en_camino_retrasado))));
+                                }
+                            }
+                            if (qSE.equalsIgnoreCase("EJECUCION")) {
+                                if (delay.equalsIgnoreCase("a tiempo")) {
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_a_tiempo))));
+                                }else if (delay.equalsIgnoreCase("a tiempo a")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_amarillo))));
+                                }else if (delay.equalsIgnoreCase("retrasado")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Ejecución").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_ejecucion_retrasado))));
+                                }
+                            }
+                            if (qSE.equalsIgnoreCase("INSPECCION")) {
+                                if (delay.equalsIgnoreCase("a tiempo")) {
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_a_tiempo))));
+                                }else if (delay.equalsIgnoreCase("a tiempo a")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_amarillo))));
+                                }else if (delay.equalsIgnoreCase("retrasado")){
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(qLatC,qLonC)).title("SISDA: " + qS).snippet("En Inspección").icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.ic_inspeccion_retrasado))));
+                                }
+                            }
                     }
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv, 12));
                 }catch (JSONException e)
                 {
                     Toast.makeText(Eventsmap.this, "Catch", Toast.LENGTH_SHORT).show();
 
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {

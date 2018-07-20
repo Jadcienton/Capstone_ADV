@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".HomeFragment">
-    <ScrollView
+    tools:context=".HomeFragment"
+    android:id="@+id/swipe_home">
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
                 <RelativeLayout
@@ -30,6 +36,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/qty_onway"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="7"
@@ -56,13 +63,13 @@
 
                 </RelativeLayout>
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:background="?android:attr/listDivider" />
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="?android:attr/listDivider" />
 
 
 
@@ -82,6 +89,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/qty_exe"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="12"
@@ -101,13 +109,13 @@
                 </RelativeLayout>
 
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:background="?android:attr/listDivider" />
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="?android:attr/listDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -125,6 +133,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/qty_insp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="8"
@@ -145,13 +154,13 @@
                 </RelativeLayout>
 
 
-            <View
-                android:id="@+id/divider3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:background="?android:attr/listDivider" />
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="?android:attr/listDivider" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -169,6 +178,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/qty_late"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="5"
@@ -187,18 +197,21 @@
 
                 </RelativeLayout>
 
-            <View
-                android:id="@+id/divider4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:background="?android:attr/listDivider" />
+                <View
+                    android:id="@+id/divider4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="?android:attr/listDivider" />
 
 
-        </LinearLayout>
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
 
 
 
-</FrameLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

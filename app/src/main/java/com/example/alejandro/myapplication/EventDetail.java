@@ -23,6 +23,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -36,10 +44,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class EventDetail extends AppCompatActivity {
+public class EventDetail extends AppCompatActivity implements OnMapReadyCallback{
     private static final String TAG = "Event Detail";
     private CoordinatorLayout mainlayout;
     private TextView codeSisda,dateCreation,dateArrival,dateBeg,dateHydraulic,datePavement;
+    private TextView priority, status,arrivalUser,beginningUser,hydraulicUser,pavementUser;
     private TextView codeCostumer,nameCostumer,Phones;
     private TextView Address,numberAddress,numerDepto,city,corner,Reference;
     private TextView level,object,fault;
@@ -48,6 +57,7 @@ public class EventDetail extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private RelativeLayout delayDetail;
     private Chronometer chrono;
+    private MapFragment mapFragment;
     long timeLeftInMilliseconds = 0;
     Sisda sisdaData;
     @Override
@@ -98,6 +108,14 @@ public class EventDetail extends AppCompatActivity {
         waterMeterQuantity = findViewById(R.id.water_meter_number_detail);
         socialClient = findViewById(R.id.social_customer_detail);
         activityCustomer = findViewById(R.id.activity_detail);
+
+        arrivalUser = findViewById(R.id.arrival_date_name_detail);
+        beginningUser= findViewById(R.id.beginning_date_name_detail);
+        hydraulicUser= findViewById(R.id.hydraulic_date_name_detail);
+        pavementUser= findViewById(R.id.pavement_date_name_detail);
+
+        priority= findViewById(R.id.sisda_priority);
+        status= findViewById(R.id.sisda_status);
 
 
         Gson gson = new Gson();
@@ -152,6 +170,16 @@ public class EventDetail extends AppCompatActivity {
         socialClient.setText(nullValue(sisdaData.getSocialClient()));
         activityCustomer.setText(nullValue(sisdaData.getActivityCustomer()));
 
+        arrivalUser.setText(EventDetail.nullValue(sisdaData.getArrivalUser()));
+        beginningUser.setText(EventDetail.nullValue(sisdaData.getBeginningUser()));
+        hydraulicUser.setText(EventDetail.nullValue(sisdaData.getHydraulicUser()));
+        pavementUser.setText(EventDetail.nullValue(sisdaData.getPavementUser()));
+
+        priority.setText(EventDetail.nullValue(sisdaData.getPriority()));
+        status.setText(EventDetail.nullValue(sisdaData.getStatus()));
+
+        mapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.map_registration));
+        mapFragment.getMapAsync(this);
 
         //Toast.makeText(getApplicationContext(), sisda, Toast.LENGTH_LONG).show();
         FloatingActionButton fab = findViewById(R.id.fab_comments_detail);
@@ -404,5 +432,64 @@ public class EventDetail extends AppCompatActivity {
             }
         }.start();
     }
+    public void onMapReady(GoogleMap googleMap) {
+        Gson gson = new Gson();
+        Bundle mibundle = this.getIntent().getExtras();
+        String sisda = mibundle.getString("detailSisda");
+        sisdaData = gson.fromJson(sisda, Sisda.class);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        LatLng adv = new LatLng(-29.928183200000003, -71.2422074);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv, 18));
+        googleMap.addMarker(new MarkerOptions().position(adv).anchor(0.5f, .05f).title("Aguas del Valle").snippet("San joaquín"));
+        if(!sisdaData.getLngArrival().equalsIgnoreCase("null") && !sisdaData.getLatArrival().equalsIgnoreCase("null"))
+        {
+            double lngA= Double.valueOf(sisdaData.getLngArrival());
+            double latA= Double.valueOf(sisdaData.getLatArrival());
+            LatLng arrivalLatLng = new LatLng(lngA,latA);
+            googleMap.addMarker(new MarkerOptions().position(arrivalLatLng).anchor(0.5f, .05f).title("Llegada a Terreno").snippet(sisdaData.getArrivalUser().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
+        }if(!sisdaData.getLngBeginning().equalsIgnoreCase("null") && !sisdaData.getLatBeginning().equalsIgnoreCase("null"))
+        {
+            double lngB= Double.valueOf(sisdaData.getLngBeginning());
+            double latB= Double.valueOf(sisdaData.getLatBeginning());
+            LatLng arrivalLatLng = new LatLng(lngB,latB);
+            googleMap.addMarker(new MarkerOptions().position(arrivalLatLng).anchor(0.5f, .05f).title("Inicio de Faenas").snippet(sisdaData.getArrivalUser().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        }
+        if(!sisdaData.getLngHydraulic().equalsIgnoreCase("null") && !sisdaData.getLatHydraulic().equalsIgnoreCase("null"))
+        {
+            double lngH= Double.valueOf(sisdaData.getLngHydraulic());
+            double latH= Double.valueOf(sisdaData.getLatHydraulic());
+            LatLng arrivalLatLng = new LatLng(lngH,latH);
+            googleMap.addMarker(new MarkerOptions().position(arrivalLatLng).anchor(0.5f, .05f).title("Finalización hidráulica").snippet(sisdaData.getArrivalUser().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+        }
+        if(!sisdaData.getLngPavement().equalsIgnoreCase("null") && !sisdaData.getLatPavement().equalsIgnoreCase("null"))
+        {
+            double lngP= Double.valueOf(sisdaData.getLngPavement());
+            double latP= Double.valueOf(sisdaData.getLatPavement());
+            LatLng arrivalLatLng = new LatLng(lngP,latP);
+            googleMap.addMarker(new MarkerOptions().position(arrivalLatLng).anchor(0.5f, .05f).title("Fin Pavimento").snippet(sisdaData.getArrivalUser().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+        }
+        googleMap.getUiSettings().setAllGesturesEnabled(false);
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker arg0) {
+                Intent intent = new Intent(EventDetail.this, EventsmapRegister.class);
+                intent.putExtra("lngA", sisdaData.getLngArrival());
+                intent.putExtra("latA", sisdaData.getLatArrival());
+                intent.putExtra("lngB", sisdaData.getLngBeginning());
+                intent.putExtra("latB", sisdaData.getLatBeginning());
+                intent.putExtra("lngH", sisdaData.getLngHydraulic());
+                intent.putExtra("latH", sisdaData.getLatHydraulic());
+                intent.putExtra("lngP", sisdaData.getLngPavement());
+                intent.putExtra("latP", sisdaData.getLatPavement());
+                intent.putExtra("arr", sisdaData.getArrivalUser().toString());
+                intent.putExtra("beg", sisdaData.getBeginningUser().toString());
+                intent.putExtra("hyd", sisdaData.getHydraulicUser().toString());
+                intent.putExtra("pav", sisdaData.getPavementUser().toString());
+                startActivity(intent);
+            }
+        });
+    }
 }

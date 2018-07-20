@@ -11,6 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -57,7 +60,7 @@ import static com.android.volley.VolleyLog.TAG;
  * Use the {@link DailyEventFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
+public class DailyEventFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private GoogleMap mMap;
@@ -67,7 +70,6 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
     RequestQueue request;
     JSONArray jsArray;
     JSONObject jsObject;
-    JsonObjectRequest JsonObjectRequest;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -76,6 +78,8 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
     private OnFragmentInteractionListener mListener;
     private RecyclerView recyclerViewSisda;
     private ArrayList<Sisda> eventList;
+
+    private String filterSelected = "";
 
     public DailyEventFragment() {
         // Required empty public constructor
@@ -101,13 +105,54 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-       // SupportMapFragment mapFragment = findFragmentById(R.id.map_detail);
-        //mapFragment.getMapAsync(this);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.target_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id= item.getItemId();
+        if(id == R.id.show_status)
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFStatus");
+            filterSelected= "show_status";
+            return false;
+        }
+        if(id == R.id.priority_one)
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPOne");
+            filterSelected= "priority_one";
+            return false;
+        }
+        if(id == R.id.priority_two)
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPTwo");
+            filterSelected= "priority_two";
+            return false;
+        }
+        if(id == R.id.date_up_down)
+        {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosDiarios");
+            filterSelected= "date_up_down";
+            return false;
+        }
+        if(id == R.id.date_down_up)
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosASC");
+            filterSelected= "date_down_up";
+            return false;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -121,7 +166,6 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
         pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
         //sisdaQuery("http://192.168.43.7/adv/EventosDiarios.php");
         final RecyclerViewAdapter adapter = new RecyclerViewAdapter(view.getContext(),eventList, "detail");
-        Log.d(TAG, "hola");
         recyclerViewSisda.setAdapter(adapter);
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
@@ -135,8 +179,32 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
                     swipeRefreshLayout.setRefreshing(false);
                     }
                 },500);
-                pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
-                recyclerViewSisda.setAdapter(adapter);
+                if(filterSelected.equalsIgnoreCase("show_status")) {
+                    pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosDiariosFStatus");
+                    recyclerViewSisda.setAdapter(adapter);
+                }else if (filterSelected.equalsIgnoreCase("priority_one"))
+                {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPOne");
+                    recyclerViewSisda.setAdapter(adapter);
+                }
+                else if (filterSelected.equalsIgnoreCase("priority_two"))
+                {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPTwo");
+                    recyclerViewSisda.setAdapter(adapter);
+                }
+                else if (filterSelected.equalsIgnoreCase("date_up_down"))
+                {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
+                    recyclerViewSisda.setAdapter(adapter);
+                }else if (filterSelected.equalsIgnoreCase("date_down_up"))
+                {
+                    pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosASC");
+                    recyclerViewSisda.setAdapter(adapter);
+                }
+                else {
+                    pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosDiarios");
+                    recyclerViewSisda.setAdapter(adapter);
+                }
             }
         });
 
@@ -147,9 +215,33 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
     public void onResume()
     {  // After a pause OR at startup
         super.onResume();
-        pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity().getApplicationContext(),eventList, "detail"); //view
-        recyclerViewSisda.setAdapter(adapter);
+        if(filterSelected.equalsIgnoreCase("show_status")) {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosDiariosFStatus");
+            recyclerViewSisda.setAdapter(adapter);
+        }else if (filterSelected.equalsIgnoreCase("priority_one"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPOne");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else if (filterSelected.equalsIgnoreCase("priority_two"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosFPTwo");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else if (filterSelected.equalsIgnoreCase("date_up_down"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiarios");
+            recyclerViewSisda.setAdapter(adapter);
+        }else if (filterSelected.equalsIgnoreCase("date_down_up"))
+        {
+            pushSisda("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=eventosDiariosASC");
+            recyclerViewSisda.setAdapter(adapter);
+        }
+        else {
+            pushSisda("http://" + getResources().getString(R.string.url_api) + "/adv/php/Get.php?id=eventosDiarios");
+            recyclerViewSisda.setAdapter(adapter);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -176,14 +268,14 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
         mListener = null;
     }
 
-    @Override
+/*    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         LatLng adv = new LatLng(-29.928119,-71.242348);
         mMap.addMarker(new MarkerOptions().position(adv).title("Aguas del Valle").snippet("San Joaquín").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(adv,12));
-    }
+    }*/
 
     /**
      * This interface must be implemented by activities that contain this
@@ -536,49 +628,6 @@ public class DailyEventFragment extends Fragment implements OnMapReadyCallback {
             }
         });
         queue.add(stringRequest);
-    }
-    public void sisdaQuery(String url){
-        Log.d(TAG, "LA URL ES: " + url);
-        RequestFuture<JSONArray> future = RequestFuture.newFuture();
-        //JsonObjectRequest request = new JsonObjectRequest()
-
-
-       // RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        // Initialize a new JsonArrayRequest instance
-        //JsonArrayRequest request = new JsonArrayRequest(url, new JSONObject(), future, future);
-       // requestQueue.add(request);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        try{
-                            for(int i=0;i<response.length();i++) {
-                                // Get current json object
-                                JSONObject sisda = response.getJSONObject(i);
-                                Log.d(TAG, " " + response.length());
-                                //eventList.add(new Sisda(sisda.getString("SISDA_EVENT"),"P"+sisda.getString("SISDA_EVENT"),sisda.getString("ADDRESS_COSTUMER")+" "+sisda.getString("NUMBER_COSTUMBER"),"Alcantarillado Sector",sisda.getString("STATE_EVENT"),"A Tiempo","0:54:01"));
-
-                            }
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error){
-                        // Do something when error occurred
-
-                    }
-                }
-        );
-        //requestQueue.add(jsonArrayRequest);
-        Log.d(TAG, " holl");
-
     }
     private static String convertUpper(String word)
     //TODO agregar En Camino, Pavimento

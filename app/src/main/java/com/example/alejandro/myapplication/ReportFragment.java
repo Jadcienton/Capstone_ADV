@@ -1,18 +1,21 @@
 package com.example.alejandro.myapplication;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.app.Fragment;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,26 +27,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
+ * {@link ReportFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
+ * Use the {@link ReportFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class ReportFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,12 +50,17 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView indicatorOne;
+    private TextView indicatorTwo;
+    private TextView indicatorThree;
+    private TextView indicatorFour;
+    private TextView indicatorFive;
+    private TextView indicatorSix;
+    private TextView indicatorSeven;
 
     private OnFragmentInteractionListener mListener;
-    private static DecimalFormat df1 = new DecimalFormat(".#");
-    private TextView qtyOnway, percentOnway, qtyExe, percentExe, qtyInsp, percentInsp, qtyLate, percentLate;
 
-    public HomeFragment() {
+    public ReportFragment() {
         // Required empty public constructor
     }
 
@@ -67,11 +70,11 @@ public class HomeFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
+     * @return A new instance of fragment ReportFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
+    public static ReportFragment newInstance(String param1, String param2) {
+        ReportFragment fragment = new ReportFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -91,19 +94,18 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_report, container, false);
+        indicatorOne= view.findViewById(R.id.indicator_one);
+        indicatorTwo= view.findViewById(R.id.indicator_two);
+        indicatorThree= view.findViewById(R.id.indicator_three);
+        indicatorFour= view.findViewById(R.id.indicator_four);
+        indicatorFive= view.findViewById(R.id.indicator_five);
+        indicatorSix= view.findViewById(R.id.indicator_six);
+        indicatorSeven= view.findViewById(R.id.indicator_seven);
+
+        getIndicators();
         // Inflate the layout for this fragment
-        getActivity().setTitle("Inicio");
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        qtyOnway = view.findViewById(R.id.qty_onway);
-        percentOnway = view.findViewById(R.id.percent_onway);
-        qtyExe = view.findViewById(R.id.qty_exe);
-        percentExe = view.findViewById(R.id.percent_exe);
-        qtyInsp = view.findViewById(R.id.qty_insp);
-        percentInsp = view.findViewById(R.id.percent_insp);
-        qtyLate = view.findViewById(R.id.qty_late);
-        percentLate = view.findViewById(R.id.percent_late);
-        getIndicators("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=indicador");
-        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_home);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_report);
         swipeRefreshLayout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -115,53 +117,59 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 },500);
-                getIndicators("http://"+getResources().getString(R.string.url_api)+"/adv/php/Get.php?id=indicador");
+                getIndicators();
             }
         });
 
-        return view;
 
+        return view;
     }
 
-    private void getIndicators(String URL) {
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+    private void getIndicators() {
+        String url =  "http://192.168.43.7/adv/php/Post.php";
+        RequestQueue request = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest= new StringRequest(StringRequest.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONArray jA= new JSONArray(response);
+                    JSONArray jA = new JSONArray(response);
                     JSONObject jO = new JSONObject(jA.getString(0));
-                    double qtyOW = jO.getDouble("qty_en_camino");
-                    double qtyE = jO.getDouble("qty_ejecucion");
-                    double qtyI = jO.getDouble("qty_inspeccion");
-                    double lateO = jO.getDouble("late_en_camino");
-                    double lateE = jO.getDouble("late_ejecucion");
-                    double lateI = jO.getDouble("late_inspeccion");
-                    qtyOnway.setText(jO.getString("qty_en_camino"));
-                    qtyExe.setText(jO.getString("qty_ejecucion"));
-                    qtyInsp.setText(jO.getString("qty_inspeccion"));
-                    String sumLate = ""+((int)lateE+(int)lateI+(int)lateO);
-                    String pO = df1.format(((qtyOW) / (qtyOW + qtyE + qtyI)*100))+"%";
-                    String pE = df1.format(((qtyE) / (qtyOW + qtyE + qtyI)*100))+"%";
-                    String pI = df1.format(((qtyI) / (qtyOW + qtyE + qtyI)*100))+"%";
-                    String pL = df1.format(((lateE+lateI+lateO) / (qtyOW + qtyE + qtyI)*100))+"%";
-                    percentOnway.setText(pO);
-                    percentExe.setText(pE);
-                    percentInsp.setText(pI);
-                    qtyLate.setText(sumLate);
-                    percentLate.setText(pL);
+                    indicatorOne.setText(EventDetail.nullValue(jO.getString("arrival_ontime"))+"%");
+                    indicatorTwo.setText(EventDetail.nullValue(jO.getString("arrival_avg_pone")));
+                    indicatorThree.setText(EventDetail.nullValue(jO.getString("done_jobs_time"))+"%");
+                    indicatorFour.setText(EventDetail.nullValue(jO.getString("avg_time_pone")));
+                    indicatorFive.setText(EventDetail.nullValue(jO.getString("avg_time_ptwo")));
+                    indicatorSix.setText(EventDetail.nullValue(jO.getString("pavement_qty"))+"%");
+                    indicatorSeven.setText(EventDetail.nullValue(jO.getString("pavement_delayed"))+"%");
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                catch (JSONException e) {
-                    Toast.makeText(getActivity().getApplicationContext(), "catch", Toast.LENGTH_SHORT).show();
-                }
-            }} , new Response.ErrorListener() {
+
+
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity().getApplicationContext(), "No se puede conectar "+ error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Error en los servidores", Toast.LENGTH_SHORT).show();
             }
-        });
-        queue.add(stringRequest);
+        }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                Map<String,String> parametros = new HashMap<>();
+                try{
+                    JSONObject userJSON = new JSONObject(parametros);
+                    params.put("id", "indicadoresHistoricos");
+                    //  params.put("data", userJSON.toString());
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Error al cargar la información", Toast.LENGTH_SHORT).show();
+                }
+                return params;
+            }
+        };
+        request.add(stringRequest);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -184,6 +192,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDetach() {
+
         super.onDetach();
         mListener = null;
     }
